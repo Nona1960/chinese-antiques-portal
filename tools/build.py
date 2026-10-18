@@ -146,7 +146,7 @@ def header(cur):
 <header class="site-header">
  <div class="wrap header-inner">
   <a class="brand" href="/index.html" aria-label="{SITE} — home">
-   <img src="/images/sun-logo.jpg" alt="Sun emblem of the Chinese Antiques library" width="46" height="46">
+   <img src="/images/sun-logo-rect.jpg" alt="Sun emblem of the Chinese Antiques library — painting by Nona Dronova" width="62" height="48">
    <span><span class="brand-name">CHINESE ANTIQUES</span><span class="brand-tag">{TAGLINE}</span></span>
   </a>
   <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))"><span></span><span></span><span></span></button>
@@ -159,7 +159,7 @@ def footer():
     return f'''<footer class="site-footer">
  <div class="wrap footer-grid">
   <div class="footer-brand">
-   <img src="/images/sun-logo.jpg" alt="Sun emblem" width="64" height="64" loading="lazy">
+   <img src="/images/sun-logo-rect.jpg" alt="Sun emblem — painting by Nona Dronova" width="96" height="74" loading="lazy">
    <div class="n">CHINESE ANTIQUES</div>
    <p>{TAGLINE}<br>Porcelain · Jade · Bronze</p>
    <a class="btn btn-small btn-gold" href="/index.html" style="margin-top:14px">← Back to Home</a>

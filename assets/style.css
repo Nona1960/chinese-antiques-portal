@@ -24,7 +24,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:76px}
 .brand{display:flex;align-items:center;gap:14px;color:var(--ink)}
 .brand:hover{color:var(--ink)}
-.brand img{width:46px;height:46px;border-radius:0;flex:none}
+.brand img{width:62px;height:48px;object-fit:cover;border-radius:0;flex:none}
 .brand-name{font-family:var(--serif);font-size:1.32rem;letter-spacing:.14em;font-weight:600;line-height:1.1;display:block}
 .brand-tag{font-size:.7rem;letter-spacing:.08em;color:var(--muted);display:block;margin-top:3px}
 .nav ul{list-style:none;display:flex;gap:4px;flex-wrap:wrap}
@@ -159,7 +159,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 /* ---------- Footer ---------- */
 .site-footer{background:var(--parchment);border-top:1px solid var(--border);margin-top:0}
 .footer-grid{display:grid;grid-template-columns:1.3fr repeat(5,1fr);gap:28px;padding:52px 0 36px}
-.footer-brand img{width:64px;height:64px;border-radius:0;margin-bottom:14px}
+.footer-brand img{width:96px;height:74px;object-fit:cover;border-radius:0;margin-bottom:14px}
 .footer-brand .n{font-family:var(--serif);font-size:1.15rem;letter-spacing:.12em;font-weight:600}
 .footer-brand p{font-size:.8rem;color:var(--muted);margin-top:6px}
 .footer-col h4{font-family:var(--sans);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;font-weight:600}
@@ -221,3 +221,15 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 .split > img.contain{object-fit:contain;background:#f1efeb;max-height:640px}
 .photo-grid figcaption{font-size:.76rem;color:var(--ink-2)}
 .book-actions .tag{white-space:nowrap}
+.brand-name{white-space:nowrap;font-size:1.18rem}
+.brand-tag{white-space:nowrap}
+.nav ul{flex-wrap:nowrap}
+.nav a{padding:8px 9px;font-size:.74rem;white-space:nowrap}
+@media (max-width:1120px){
+  .nav-toggle{display:block}
+  .nav{position:absolute;left:0;right:0;top:100%;background:var(--paper);border-bottom:1px solid var(--border);display:none}
+  .nav.open{display:block}
+  .nav ul{flex-direction:column;padding:8px 16px 16px}
+  .nav a{padding:12px 4px;border-bottom:1px solid var(--border)}
+}
+.footer-brand .n{white-space:nowrap;font-size:1.05rem}
