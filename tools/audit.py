@@ -10,7 +10,7 @@ for dp, dn, fn in os.walk(ROOT):
     if "/." in dp or "/tools" in dp:
         continue
     for f in fn:
-        if f.endswith(".html"):
+        if f.endswith(".html") and not f.startswith(("google", "yandex")):
             pages.append(os.path.relpath(os.path.join(dp, f), ROOT))
 pages.sort()
 problems = []
