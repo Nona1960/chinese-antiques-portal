@@ -1,0 +1,649 @@
+#!/usr/bin/env python3
+"""Static site builder for the Chinese Antiques portal.
+
+Run from the repository root:  python3 tools/build.py
+Pages are generated into the repository root. Chapter texts live in
+tools/content/<book>/chNN.md (Markdown, converted with pandoc).
+"""
+import html, json, os, re, subprocess, datetime
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE = "https://chinese-antiques-portal.vercel.app"
+SITE = "Chinese Antiques"
+TAGLINE = "Scientific Library & Expert Reference"
+TODAY = datetime.date.today().isoformat()
+ORCID = "https://orcid.org/0009-0007-4867-9074"
+ATLAS = "https://nona1960.github.io/atlas-of-chinese-porcelain-diagnostics/"
+ATLAS_JB = "https://nona1960.github.io/Atlas-of-Ancient-Jade-and-Bronze-Diagnostics/"
+STUDIO = "https://nona-dronova-art-studio.vercel.app/"
+
+PERSON_ID = BASE + "/author.html#person"
+PERSON = {
+    "@type": "Person", "@id": PERSON_ID, "name": "Nona Dronova",
+    "alternateName": "Nona Dmitrievna Dronova",
+    "jobTitle": "Professor, Doctor of Technical Sciences",
+    "description": "Gemmologist and researcher in the authentication of antique Chinese porcelain, jade and bronze; author of the Dronova gemmological optical microscopy (GOM / BEINOS) method.",
+    "url": BASE + "/author.html", "image": BASE + "/images/nona-dronova.jpg",
+    "sameAs": [ORCID, STUDIO, ATLAS, ATLAS_JB],
+    "knowsAbout": ["Chinese porcelain", "Chinese jade", "Chinese bronze", "Gemmology",
+                   "Gemmological optical microscopy", "Authentication of antiques", "Attribution"],
+}
+
+NAV = [("index.html", "Home"), ("porcelain.html", "Porcelain"), ("jade-bronze.html", "Bronze & Jade"),
+       ("atlas.html", "Diagnostic Atlas"), ("library.html", "Library"), ("author.html", "About the Author")]
+
+FOOTER = [
+    ("about.html", "About the Project", "Purpose and scope of the scientific library."),
+    ("author.html", "About the Author", "Biography and research of Professor Nona Dronova."),
+    ("literature.html", "Scientific Literature", "Bibliography and reference sources."),
+    ("library.html", "Library", "Monographs, articles and reference works."),
+    ("publications.html", "Zenodo Publications", "Open-access research papers with DOI."),
+]
+
+# ------------------------------------------------------------------ books
+PORCELAIN = {
+    "slug": "monographs/antique-chinese-porcelain",
+    "title": "What You Need to Know About Antique Chinese Porcelain",
+    "orig": "Что надо знать о старинном китайском фарфоре",
+    "kind": "Reference encyclopaedia",
+    "year": "2016", "place": "Moscow", "isbn": "978-5-9908782-6-6",
+    "cover": "/images/porcelain-book-cover.jpg",
+    "abstract": ("A reference encyclopaedia that provides the information needed to attribute antique Chinese "
+                 "porcelain in accordance with international standards. Separate chapters are devoted to the "
+                 "appraisal and diagnosis of export, imperial and monochrome porcelain; the book examines the "
+                 "development of porcelain styles and the marks found on antique Chinese porcelain, and gives "
+                 "practical recommendations for detecting forgeries."),
+    "chapters": [
+        (1, "On Collecting Chinese Porcelain", "Особенности коллекционирования китайского фарфора", "chapter-01-collecting-chinese-porcelain"),
+        (2, "How to Distinguish Genuine Antique Porcelain from a Fake", "Как отличить подлинный старинный фарфор от подделки", "chapter-02-genuine-or-fake"),
+        (3, "Appraisal of Chinese Antique Porcelain", "Оценка китайских антикварных фарфоровых изделий", "chapter-03-appraisal"),
+        (4, "Features of the Attribution of Antique Chinese Porcelain", "Особенности атрибуции старинного китайского фарфора", "chapter-04-attribution"),
+        (5, "Styles in Chinese Antique Porcelain", "Стили в китайских антикварных фарфоровых изделиях", "chapter-05-styles"),
+        (6, "Symbols in Chinese Porcelain", "Символы китайского фарфора", "chapter-06-symbols"),
+        (7, "Attribution of Wares Painted in Underglaze Cobalt Blue", "Атрибуция изделий с росписью подглазурным кобальтом", "chapter-07-underglaze-cobalt"),
+        (8, "Export Porcelain", "Экспортный фарфор", "chapter-08-export-porcelain"),
+        (9, "Imperial Porcelain", "Императорский фарфор", "chapter-09-imperial-porcelain"),
+        (10, "Varieties of Antique Chinese Monochrome Porcelain", "Разновидности старинного китайского монохромного фарфора", "chapter-10-monochrome-porcelain"),
+    ],
+}
+JADE = {
+    "slug": "monographs/antique-chinese-jade",
+    "title": "What You Need to Know About Antique Chinese Jade",
+    "orig": "Что надо знать о старинном китайском нефрите",
+    "kind": "Reference monograph",
+}
+
+def esc(s):
+    return html.escape(s, quote=True)
+
+def chapter_file(n):
+    return os.path.join(ROOT, "tools", "content", "porcelain", f"ch{n:02d}.md")
+
+def available(n):
+    return os.path.exists(chapter_file(n))
+
+# ------------------------------------------------------------------ layout
+def header(cur):
+    items = "".join(
+        f'<li><a href="/{h}"{" aria-current=\"page\"" if h == cur else ""}>{esc(t)}</a></li>' for h, t in NAV)
+    return f'''<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+ <div class="wrap header-inner">
+  <a class="brand" href="/index.html" aria-label="{SITE} — home">
+   <img src="/images/sun-logo.jpg" alt="Sun emblem of the Chinese Antiques library" width="46" height="46">
+   <span><span class="brand-name">CHINESE ANTIQUES</span><span class="brand-tag">{TAGLINE}</span></span>
+  </a>
+  <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))"><span></span><span></span><span></span></button>
+  <nav class="nav" id="nav" aria-label="Main"><ul>{items}</ul></nav>
+ </div>
+</header>'''
+
+def footer():
+    cols = "".join(f'<div class="footer-col"><h4><a href="/{h}">{esc(t)}</a></h4><p>{esc(d)}</p></div>' for h, t, d in FOOTER)
+    return f'''<footer class="site-footer">
+ <div class="wrap footer-grid">
+  <div class="footer-brand">
+   <img src="/images/sun-logo.jpg" alt="Sun emblem" width="64" height="64" loading="lazy">
+   <div class="n">CHINESE ANTIQUES</div>
+   <p>{TAGLINE}<br>Porcelain · Jade · Bronze</p>
+  </div>
+  {cols}
+ </div>
+ <div class="wrap footer-bottom">
+  <span>&copy; 2026 Nona Dronova. All rights reserved.</span>
+  <span><a href="{ORCID}" target="_blank" rel="noopener">ORCID 0009-0007-4867-9074</a> · <a href="{ATLAS}" target="_blank" rel="noopener">Diagnostic Atlas</a> · <a href="{STUDIO}" target="_blank" rel="noopener">Art Studio</a></span>
+ </div>
+</footer>'''
+
+def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_type="website",
+         graph=None, crumbs=None, lang_note=None):
+    url = BASE + "/" + ("" if path == "index.html" else path)
+    full_title = title if path == "index.html" else f"{title} — {SITE}"
+    nodes = [{"@type": "WebSite", "@id": BASE + "/#website", "url": BASE + "/", "name": f"{SITE} — {TAGLINE}",
+              "inLanguage": "en", "publisher": {"@id": PERSON_ID}}]
+    if crumbs:
+        items = [{"@type": "ListItem", "position": 1, "name": "Home", "item": BASE + "/"}]
+        for i, (n, h) in enumerate(crumbs, 2):
+            items.append({"@type": "ListItem", "position": i, "name": n, "item": BASE + "/" + h})
+        nodes.append({"@type": "BreadcrumbList", "itemListElement": items})
+    nodes += graph or []
+    ld = json.dumps({"@context": "https://schema.org", "@graph": nodes}, ensure_ascii=False, indent=1)
+    doc = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{esc(full_title)}</title>
+<meta name="description" content="{esc(desc)}">
+<meta name="author" content="Nona Dronova">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="{url}">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#fbf9f5">
+<meta property="og:type" content="{og_type}">
+<meta property="og:site_name" content="{SITE} — {TAGLINE}">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="{esc(full_title)}">
+<meta property="og:description" content="{esc(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{BASE}{og_image}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{esc(full_title)}">
+<meta name="twitter:description" content="{esc(desc)}">
+<meta name="twitter:image" content="{BASE}{og_image}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script type="application/ld+json">
+{ld}
+</script>
+</head>
+<body>
+{header(cur)}
+<main id="main">
+{body}
+</main>
+{footer()}
+</body>
+</html>
+'''
+    out = os.path.join(ROOT, path)
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, "w", encoding="utf-8").write(doc)
+    PAGES.append(path)
+
+PAGES = []
+
+def head_band(title, lead=None, crumbs=None, eyebrow=None):
+    c = ""
+    if crumbs:
+        c = '<div class="crumbs"><a href="/index.html">Home</a>' + "".join(
+            f' / <a href="/{h}">{esc(n)}</a>' for n, h in crumbs[:-1]) + f' / <span>{esc(crumbs[-1][0])}</span></div>'
+    e = f'<span class="eyebrow">{esc(eyebrow)}</span>' if eyebrow else ""
+    l = f'<p class="lead">{lead}</p>' if lead else ""
+    return f'<section class="page-head"><div class="wrap">{c}{e}<h1>{title}</h1>{l}</div></section>'
+
+def book_card(b, link=True):
+    ch = sum(1 for c in PORCELAIN["chapters"] if available(c[0])) if b is PORCELAIN else 0
+    if b is PORCELAIN:
+        cover = f'<img class="cover" src="{b["cover"]}" alt="Cover of the book «{b["orig"]}» by Nona Dronova" loading="lazy">'
+        meta = f'{b["kind"]} · {b["place"]}, {b["year"]} · ISBN {b["isbn"]}'
+        p = b["abstract"]
+        tag = f'<span class="tag">English edition · {ch} of {len(b["chapters"])} chapters online</span>'
+    else:
+        cover = ('<div class="cover-placeholder" role="img" aria-label="Book cover placeholder"><span class="a">Nona Dronova</span>'
+                 f'<span class="t">{esc(b["orig"])}</span><span class="s">Forthcoming</span></div>')
+        meta = f'{b["kind"]} · Russian original'
+        p = ("The second monograph of the library, devoted to the identification and authentication of antique "
+             "Chinese jade (nephrite). The English edition is being prepared chapter by chapter.")
+        tag = '<span class="tag">English edition in preparation</span>'
+    more = f'<p style="margin-top:14px"><a class="btn" href="/{b["slug"]}/">Open the book</a></p>' if link else ""
+    return (f'<article class="book">{cover}<div><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
+            f'<div class="meta">{esc(meta)}</div><p>{esc(p)}</p>{tag}{more}</div></article>')
+
+# ------------------------------------------------------------------ pages
+def build_home():
+    photos = [
+        ("yellow-vase", "Yellow-glazed globular bottle vase with incised dragon and cloud decoration"),
+        ("celadon-vase", "Pale blue crackle-glazed baluster vase"),
+        ("jade-bat", "Carved dark jade figure of a bat with outspread wings"),
+        ("jade-bird-vessel", "Jade bird-form vessel with incised decoration"),
+    ]
+    figs = "".join(
+        f'<figure><picture><source srcset="/images/{f}.webp" type="image/webp"><img src="/images/{f}.jpg" alt="{esc(a)}" width="480" height="640"{" style=\"object-position:72% center\"" if f == "jade-bird-vessel" else ""}{" loading=\"lazy\"" if i > 1 else ""}></picture><figcaption>{esc(a)}</figcaption></figure>'
+        for i, (f, a) in enumerate(photos))
+    body = f'''
+<section class="hero">
+ <div class="wrap hero-grid">
+  <div class="title-card">
+   <h1>Chinese Antiques</h1>
+   <div class="rule"></div>
+   <p class="sub">Scientific Library of Research and Attribution</p>
+   <p class="fields">Porcelain · Jade · Bronze</p>
+   <p class="desc">Author's monographs, scientific publications and reference materials on the expert examination and authentication of Chinese works of art.</p>
+   <div class="actions"><a class="btn btn-gold" href="/library.html">Enter the Library</a><a class="btn" href="/atlas.html">Diagnostic Atlas</a></div>
+  </div>
+  <div class="photo-grid">{figs}</div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="wrap">
+  <div class="section-head"><span class="eyebrow">Fields of study</span><h2>Three materials, one method</h2>
+  <p>The library brings together research on the three principal materials of Chinese antique art. Each is studied through the same principle: authenticity is established not by a single feature, but by a coherent system of material, technological and stylistic evidence.</p></div>
+  <div class="cards">
+   <article class="card"><img src="/images/yellow-vase.jpg" alt="Yellow-glazed porcelain bottle vase" loading="lazy" style="object-position:center 40%"><div class="card-body"><h3>Porcelain</h3><p>History, styles, marks and symbols; export, imperial and monochrome wares; criteria for distinguishing genuine antique porcelain from later copies and forgeries.</p><a class="more" href="/porcelain.html">Explore porcelain →</a></div></article>
+   <article class="card"><img src="/images/jade-bat.jpg" alt="Carved dark jade bat" loading="lazy" style="object-position:center 30%"><div class="card-body"><h3>Jade</h3><p>Nephrite and its imitations, carving techniques and tool marks, surface alteration and patina as evidence of age.</p><a class="more" href="/jade-bronze.html#jade">Explore jade →</a></div></article>
+   <article class="card"><img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, Atlas reference object RO-BRONZE-036" loading="lazy" style="object-position:center 35%"><div class="card-body"><h3>Bronze</h3><p>Ritual bronze forms, casting technology, corrosion layers and patina, and the diagnostic value of trace elements.</p><a class="more" href="/jade-bronze.html#bronze">Explore bronze →</a></div></article>
+  </div>
+ </div>
+</section>
+
+<section class="section alt">
+ <div class="wrap">
+  <div class="section-head"><span class="eyebrow">Scientific publications of the author</span><h2>Monographs</h2>
+  <p>The foundation of the library: two reference monographs by Professor Nona Dronova, published in Russian and presented here in English translation.</p></div>
+  <div class="books">{book_card(PORCELAIN)}{book_card(JADE)}</div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="wrap split">
+  <img src="/images/atlas-ming-028-anhua.jpg" alt="Anhua incised dragon under raking light on an imperial yellow-glazed vase, Atlas reference object RO-MING-028" loading="lazy">
+  <div class="prose"><span class="eyebrow">Diagnostic Atlas</span><h2 style="margin-top:0">Diagnostic Atlas of Chinese Porcelain</h2>
+  <p>A scientific reference system of documented objects from the Tang to the Qing dynasty. Each entry records the image, the diagnostic feature, its description, the method of observation and the limits of its interpretation.</p>
+  <p><a class="btn" href="/atlas.html">About the Atlas</a></p></div>
+ </div>
+</section>
+
+<section class="section alt">
+ <div class="wrap split rev">
+  <div class="prose"><span class="eyebrow">About the author</span><h2 style="margin-top:0">Professor Nona Dronova</h2>
+  <p>Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist with forty years of practice. Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics and author of a non-destructive method of authentication based on gemmological optical microscopy.</p>
+  <p><a class="btn" href="/author.html">Read the biography</a></p></div>
+  <img src="/images/nona-dronova.jpg" alt="Professor Nona Dronova" loading="lazy" style="max-width:420px;justify-self:center">
+ </div>
+</section>'''
+    graph = [{"@type": "WebPage", "@id": BASE + "/#webpage", "url": BASE + "/", "name": "Chinese Antiques — Scientific Library of Research and Attribution",
+              "isPartOf": {"@id": BASE + "/#website"}, "about": ["Chinese porcelain", "Chinese jade", "Chinese bronze"], "author": {"@id": PERSON_ID}},
+             PERSON]
+    page("index.html", "Chinese Antiques — Scientific Library of Research and Attribution · Porcelain, Jade, Bronze",
+         "Scientific library and expert reference on Chinese antiques by Professor Nona Dronova: monographs, research and methods for the attribution and authentication of porcelain, jade and bronze.",
+         body, cur="index.html", graph=graph)
+
+def build_porcelain():
+    toc = "".join(
+        f'<li><span class="n">{n:02d}</span><span class="t">{"<a href=\"/" + PORCELAIN["slug"] + "/" + s + ".html\">" + esc(t) + "</a>" if available(n) else esc(t)}</span><span class="s{" ok" if available(n) else ""}">{"Read" if available(n) else "In translation"}</span></li>'
+        for n, t, o, s in PORCELAIN["chapters"])
+    body = head_band("Porcelain", "Antique Chinese porcelain: history, styles, symbols and marks; the appraisal of export, imperial and monochrome wares; and the criteria that separate genuine antique pieces from later copies and forgeries.",
+                     crumbs=[("Porcelain", "porcelain.html")], eyebrow="Field of study") + f'''
+<section class="section">
+ <div class="wrap split">
+  <img src="/images/celadon-vase.jpg" alt="Pale blue crackle-glazed baluster vase" loading="lazy" style="max-width:440px">
+  <div class="prose">
+   <h2 style="margin-top:0">Porcelain as a historical document</h2>
+   <p>The character and forms of porcelain reflect the life and development of society, its ideas, culture and daily life in a given epoch. Every object carries the evidence of its own manufacture: the composition of its body and glaze, the method of forming and firing, the style of its decoration and the traces of natural ageing.</p>
+   <p>The research presented in this section approaches attribution as a sequence: examination of the object, identification of its material, dating of the period of manufacture, analysis of the decoration and marks, assessment of condition and, finally, appraisal.</p>
+  </div>
+ </div>
+</section>
+<section class="section alt">
+ <div class="wrap">
+  <div class="section-head"><span class="eyebrow">Monograph</span><h2>{esc(PORCELAIN["title"])}</h2><p>{esc(PORCELAIN["abstract"])}</p></div>
+  <ol class="toc">{toc}</ol>
+  <p style="margin-top:26px"><a class="btn btn-gold" href="/{PORCELAIN["slug"]}/">About the book</a></p>
+ </div>
+</section>
+<section class="section">
+ <div class="wrap split rev">
+  <div class="prose"><span class="eyebrow">Reference collection</span><h2 style="margin-top:0">Diagnostic Atlas of Chinese Porcelain</h2>
+   <p>Documented reference objects from the Tang to the Qing dynasty, examined by gemmological optical microscopy. The Atlas is the practical companion to the monograph: what the book describes, the Atlas shows at the level of glaze, body and surface.</p>
+   <p><a class="btn" href="/atlas.html">Open the Atlas section</a></p></div>
+  <img src="/images/atlas-song-002-phase-sep.jpg" alt="Liquid–liquid phase separation in Ru-type glaze under the microscope, reference object RO-SONG-002" loading="lazy">
+ </div>
+</section>'''
+    page("porcelain.html", "Antique Chinese Porcelain — Attribution, Styles and Authentication",
+         "Antique Chinese porcelain: history, styles, symbols and marks, export, imperial and monochrome wares, and criteria for distinguishing genuine pieces from forgeries.",
+         body, cur="porcelain.html", og_image="/images/celadon-vase.jpg", crumbs=[("Porcelain", "porcelain.html")],
+         graph=[{"@type": "CollectionPage", "url": BASE + "/porcelain.html", "name": "Antique Chinese Porcelain", "about": "Chinese porcelain", "author": {"@id": PERSON_ID}}])
+
+def build_jade_bronze():
+    body = head_band("Bronze &amp; Jade", "Ancient Chinese jade and ritual bronze: materials, working techniques, surface alteration and the diagnostic evidence of age.",
+                     crumbs=[("Bronze & Jade", "jade-bronze.html")], eyebrow="Fields of study") + f'''
+<section class="section" id="jade">
+ <div class="wrap split">
+  <img src="/images/jade-bat.jpg" alt="Carved dark jade figure of a bat with outspread wings" loading="lazy" style="max-width:380px;justify-self:center">
+  <div class="prose">
+   <span class="eyebrow">Jade</span><h2 style="margin-top:0">Antique Chinese jade</h2>
+   <p>Jade occupies a unique place in Chinese culture, from the ritual objects of the Neolithic to the carvings of the Qing court. For the expert, every jade carries two records: the stone itself — nephrite, its structure and colour — and the history of its working, preserved in tool marks, polish and drilling.</p>
+   <p>Authentication rests on the study of the surface: the alteration zones, burial patina and natural transformation that form over centuries and that are extremely difficult to reproduce artificially.</p>
+   <p>The monograph <em>{esc(JADE["title"])}</em> is being prepared for this library.</p>
+   <p><a class="btn" href="/{JADE["slug"]}/">About the jade monograph</a></p>
+  </div>
+ </div>
+</section>
+<section class="section alt" id="bronze">
+ <div class="wrap split rev">
+  <div class="prose">
+   <span class="eyebrow">Bronze</span><h2 style="margin-top:0">Ancient Chinese bronze</h2>
+   <p>Ritual bronze vessels and archaistic objects are studied through their form and decoration, casting technology, corrosion layers and patina. Microstructural and chemical evidence — including the trace elements of the alloy and of the corrosion products — makes it possible to distinguish natural long-term change from artificial patination.</p>
+   <p>Documented reference objects in jade and bronze are published in the companion Atlas.</p>
+   <p><a class="btn" href="{ATLAS_JB}" target="_blank" rel="noopener">Atlas of Ancient Jade and Bronze ↗</a></p>
+  </div>
+  <img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, Atlas reference object RO-BRONZE-036" loading="lazy">
+ </div>
+</section>'''
+    page("jade-bronze.html", "Ancient Chinese Jade and Bronze — Materials and Authentication",
+         "Ancient Chinese jade and ritual bronze: materials, working techniques, surface alteration, patina and the diagnostic evidence of age.",
+         body, cur="jade-bronze.html", og_image="/images/jade-bat.jpg", crumbs=[("Bronze & Jade", "jade-bronze.html")],
+         graph=[{"@type": "CollectionPage", "url": BASE + "/jade-bronze.html", "name": "Ancient Chinese Jade and Bronze", "about": ["Chinese jade", "Chinese bronze"], "author": {"@id": PERSON_ID}}])
+
+def build_atlas():
+    feats = [
+        ("RO-MING-028", "ro-ming-028.html", "atlas-ming-028-anhua.jpg",
+         "Anhua — “hidden” incised decoration",
+         "Imperial sacrificial-yellow tianqiuping · Ming, Chenghua period (1465–1487) · Imperial kilns, Jingdezhen",
+         "Anhua (暗花): a five-clawed dragon and cloud scrolls incised into the body before glazing, legible only through the even jiaohuang yellow glaze.",
+         "The decoration reads as darker yellow lines where the glaze pools in the incisions; it encircles the globular body in a continuous composition without cartouches.",
+         "Macroscopic examination under raking (oblique) illumination; gemmological optical microscopy of the glaze surface.",
+         "Incised decoration is a stylistic indicator only. It supports attribution in conjunction with the reign mark, the foot rim and the microstructure of the glaze — never on its own.",
+         "Fig. Anhua on the body under oblique illumination: dragon, scales, cloud scrolls."),
+        ("RO-SONG-002", "ro-song-002.html", "atlas-song-002-phase-sep.jpg",
+         "Liquid–liquid phase separation in the glaze",
+         "Ru-type vase with sky-blue glaze and crackle · Northern Song, late 11th – early 12th century",
+         "A bimodal glaze microstructure: pale bluish rounded domains within a darker blue-grey interstitial matrix.",
+         "The phase-separated structure is the physical origin of the soft internal luminosity of the sky-blue Ru glaze.",
+         "Gemmological optical microscopy of the glaze surface, non-destructive, no sampling.",
+         "The feature describes the glaze chemistry and firing; it is evaluated together with the body, the spur marks and the crackle network. Attribution follows the accompanying documentation.",
+         "Fig. Liquid–liquid phase separation in the glaze."),
+        ("RO-SONG-004", "ro-song-004.html", "atlas-song-004-overall.jpg",
+         "Double crackle — jin si tie xian (金絲鐵線)",
+         "Bottle vase with dense crackle · Ge-type, Southern Song, 12th–13th century",
+         "Two generations of cracks: large primary polygons (“iron wire”, tie xian) subdivided by finer secondary cracks (“golden thread”, jin si).",
+         "The two crack generations are differentiated by width and colour; dark iron–manganese deposits line the walls of the primary cracks.",
+         "Visual examination and low magnification; microscopy of crack walls (approx. 120×).",
+         "Crackle can be induced deliberately and stained artificially. Only the gradual colour transition of naturally diffused deposits, together with the body and kiln evidence, is diagnostic.",
+         "Fig. Overall view of the vase."),
+    ]
+    cards = "".join(f'''<article class="feature">
+ <div><img src="/images/{img}" alt="{esc(ttl)} — {esc(ro)}" loading="lazy"><p class="fig">{esc(fig)} {esc(ro)}.</p></div>
+ <div><span class="ro">{esc(ro)}</span><h3>{esc(ttl)}</h3><p style="color:var(--muted);font-size:.9rem;margin-top:4px">{esc(obj)}</p>
+  <dl><dt>Diagnostic feature</dt><dd>{esc(feat)}</dd><dt>Description</dt><dd>{esc(descr)}</dd><dt>Method of observation</dt><dd>{esc(meth)}</dd><dt>Limits of interpretation</dt><dd>{esc(lim)}</dd></dl>
+  <p style="margin-top:16px"><a href="{ATLAS}{link}" target="_blank" rel="noopener">Full entry in the Atlas ↗</a></p></div>
+</article>''' for ro, link, img, ttl, obj, feat, descr, meth, lim, fig in feats)
+    body = head_band("Diagnostic Atlas of Chinese Porcelain",
+                     "A scientific reference system for the authentication of ancient Chinese ceramics and porcelain — not a gallery of photographs, but a structured body of diagnostic evidence.",
+                     crumbs=[("Diagnostic Atlas", "atlas.html")], eyebrow="Reference collection") + f'''
+<section class="section">
+ <div class="wrap">
+  <div class="section-head"><h2>How each entry is structured</h2><p>Every diagnostic observation in the Atlas is recorded in the same five parts, so that it can be checked, compared and reproduced.</p></div>
+  <div class="schema">
+   <div><i>01</i><b>Image</b><span>Overall view, details and micrographs of the object.</span></div>
+   <div><i>02</i><b>Diagnostic feature</b><span>The named feature being documented.</span></div>
+   <div><i>03</i><b>Description</b><span>What is observed, in controlled vocabulary.</span></div>
+   <div><i>04</i><b>Method of observation</b><span>Lighting, magnification and instrument.</span></div>
+   <div><i>05</i><b>Limits of interpretation</b><span>What the feature can and cannot prove.</span></div>
+  </div>
+  <div class="note"><strong>Foundational principle.</strong> Authenticity is determined not by any single visual feature, but by a system of interrelated material characteristics. No single feature is individually diagnostic — it is the coherent conjunction of multiple parameters that supports attribution.</div>
+ </div>
+</section>
+<section class="section alt">
+ <div class="wrap">
+  <div class="section-head"><span class="eyebrow">Examples from the reference collection</span><h2>Diagnostic features</h2></div>
+  {cards}
+ </div>
+</section>
+<section class="section">
+ <div class="wrap split">
+  <img src="/images/atlas-yuan-017-micro.jpg" alt="Glaze surface under the microscope at 40× magnification, reference object RO-YUAN-017" loading="lazy">
+  <div class="prose"><h2 style="margin-top:0">The complete Atlas</h2>
+  <p>The full reference collection — objects from the Tang through the Qing dynasties, each documented by the Dronova method of non-destructive gemmological optical microscopy (BEINOS) — together with the methodology and an index of more than 240 open-access publications.</p>
+  <p><a class="btn btn-gold" href="{ATLAS}" target="_blank" rel="noopener">Open the Atlas ↗</a> <a class="btn" href="{ATLAS}methodology.html" target="_blank" rel="noopener">Methodology ↗</a></p>
+  <p style="font-size:.85rem;color:var(--muted)">Attribution of reference objects follows their accompanying documentation; no independent authentication is claimed.</p></div>
+ </div>
+</section>'''
+    page("atlas.html", "Diagnostic Atlas of Chinese Porcelain — Reference Collection",
+         "Diagnostic Atlas of Chinese Porcelain: documented reference objects with image, diagnostic feature, description, method of observation and limits of interpretation.",
+         body, cur="atlas.html", og_image="/images/atlas-ming-028-anhua.jpg", crumbs=[("Diagnostic Atlas", "atlas.html")],
+         graph=[{"@type": "CollectionPage", "url": BASE + "/atlas.html", "name": "Diagnostic Atlas of Chinese Porcelain", "author": {"@id": PERSON_ID},
+                 "relatedLink": ATLAS}])
+
+def build_library():
+    body = head_band("Library", "The author's own works: monographs, scientific articles and reference materials on the attribution and authentication of Chinese antiques.",
+                     crumbs=[("Library", "library.html")], eyebrow="Scientific library") + f'''
+<section class="section">
+ <div class="wrap">
+  <div class="section-head"><h2>Monographs</h2></div>
+  <div class="books">{book_card(PORCELAIN)}{book_card(JADE)}</div>
+ </div>
+</section>
+<section class="section alt">
+ <div class="wrap split">
+  <div class="prose"><h2 style="margin-top:0">Scientific articles</h2>
+  <p>More than 240 open-access articles on the authentication of individual objects and on diagnostic method are published on Zenodo, each with its own DOI.</p>
+  <p><a class="btn" href="/publications.html">Zenodo publications</a></p></div>
+  <div class="prose"><h2 style="margin-top:0">Reference sources</h2>
+  <p>The bibliography of works by other scholars on which the research relies is collected separately.</p>
+  <p><a class="btn" href="/literature.html">Scientific literature</a></p></div>
+ </div>
+</section>'''
+    page("library.html", "Library — Monographs and Research by Nona Dronova",
+         "Monographs, scientific articles and reference materials by Professor Nona Dronova on the attribution and authentication of Chinese porcelain, jade and bronze.",
+         body, cur="library.html", og_image="/images/porcelain-book-cover.jpg", crumbs=[("Library", "library.html")],
+         graph=[{"@type": "CollectionPage", "url": BASE + "/library.html", "name": "Library", "author": {"@id": PERSON_ID},
+                 "hasPart": [{"@id": BASE + "/" + PORCELAIN["slug"] + "/#book"}]}])
+
+def book_graph():
+    url = BASE + "/" + PORCELAIN["slug"] + "/"
+    parts = [{"@type": "Chapter", "position": n, "name": t, "url": url + s + ".html"} for n, t, o, s in PORCELAIN["chapters"] if available(n)]
+    return {"@type": "Book", "@id": url + "#book", "name": PORCELAIN["orig"], "alternateName": PORCELAIN["title"],
+            "author": {"@id": PERSON_ID}, "isbn": PORCELAIN["isbn"], "datePublished": PORCELAIN["year"], "inLanguage": "ru",
+            "bookFormat": "https://schema.org/Hardcover", "image": BASE + PORCELAIN["cover"], "url": url,
+            "description": PORCELAIN["abstract"], "genre": "Reference encyclopaedia",
+            "about": ["Chinese porcelain", "Attribution", "Authentication of antiques"],
+            "workTranslation": {"@type": "Book", "name": PORCELAIN["title"], "inLanguage": "en", "url": url, "translator": {"@id": PERSON_ID}, "hasPart": parts}}
+
+def build_porcelain_book():
+    b = PORCELAIN
+    toc = "".join(
+        f'<li><span class="n">{n:02d}</span><span class="t">{"<a href=\"" + s + ".html\">" + esc(t) + "</a>" if available(n) else esc(t)}<small>{esc(o)}</small></span><span class="s{" ok" if available(n) else ""}">{"Read" if available(n) else "In translation"}</span></li>'
+        for n, t, o, s in b["chapters"])
+    body = head_band(esc(b["title"]), f'<em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
+<section class="section">
+ <div class="wrap split cover-split">
+  <img src="{b["cover"]}" alt="Cover of «{esc(b["orig"])}» by Nona Dronova" style="max-width:300px">
+  <div class="prose">
+   <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{b["kind"]}</dd><dt>Published</dt><dd>{b["place"]}, {b["year"]}</dd><dt>ISBN</dt><dd>{b["isbn"]}</dd><dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>Translated chapter by chapter on this site</dd></dl>
+   <h2>Abstract</h2><p>{esc(b["abstract"])}</p>
+  </div>
+ </div>
+</section>
+<section class="section alt">
+ <div class="wrap"><div class="section-head"><h2>Contents</h2></div><ol class="toc">{toc}</ol></div>
+</section>'''
+    page(b["slug"] + "/index.html", b["title"], "Reference encyclopaedia by Nona Dronova on the attribution of antique Chinese porcelain: export, imperial and monochrome wares, styles, marks, symbols and the detection of forgeries. English edition.",
+         body, cur="library.html", og_image=b["cover"], og_type="book", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
+         graph=[book_graph()])
+
+def md_to_html(path):
+    return subprocess.run(["pandoc", path, "-f", "markdown", "-t", "html5", "--wrap=none"],
+                          capture_output=True, text=True, check=True).stdout
+
+def build_chapters():
+    b = PORCELAIN
+    chs = b["chapters"]
+    avail = [c for c in chs if available(c[0])]
+    for n, t, o, s in avail:
+        h = md_to_html(chapter_file(n))
+        h = re.sub(r"<h1[^>]*>.*?</h1>", "", h, count=1, flags=re.S)
+        side = "".join(
+            f'<li class="{"cur" if c[0] == n else ("off" if not available(c[0]) else "")}">' +
+            (f'<a href="{c[3]}.html">{c[0]}. {esc(c[1])}</a>' if available(c[0]) else f'{c[0]}. {esc(c[1])}') + '</li>' for c in chs)
+        i = [c[0] for c in avail].index(n)
+        prev = avail[i - 1] if i > 0 else None
+        nxt = avail[i + 1] if i + 1 < len(avail) else None
+        nav = '<div class="chapter-nav">' + (f'<a href="{prev[3]}.html">← {esc(prev[1])}</a>' if prev else '<a href="./">← Contents</a>') + \
+              (f'<a href="{nxt[3]}.html">{esc(nxt[1])} →</a>' if nxt else '<a href="./">Contents →</a>') + '</div>'
+        body = f'''<div class="wrap reader">
+ <aside><h4>{esc(b["title"])}</h4><ol>{side}</ol><p style="margin-top:16px"><a href="./">About the book</a></p></aside>
+ <article class="prose">
+  <div class="crumbs"><a href="/index.html">Home</a> / <a href="/library.html">Library</a> / <a href="./">{esc(b["title"])}</a> / Chapter {n}</div>
+  <span class="eyebrow">Chapter {n}</span>
+  <h1>{esc(t)}</h1>
+  <p style="font-family:var(--serif);font-style:italic;color:var(--muted);margin-top:-.6em">{esc(o)}</p>
+  {h}
+  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Nona Dronova, <em>{esc(b["title"])}</em> (<em>{esc(b["orig"])}</em>). {b["place"]}, {b["year"]}. ISBN {b["isbn"]}. English translation.</p>
+  {nav}
+ </article>
+</div>'''
+        words = len(re.sub("<[^>]+>", " ", h).split())
+        url = BASE + "/" + b["slug"] + "/" + s + ".html"
+        g = [{"@type": "Chapter", "@id": url + "#chapter", "name": t, "alternateName": o, "position": n, "url": url,
+              "inLanguage": "en", "wordCount": words, "author": {"@id": PERSON_ID},
+              "isPartOf": {"@id": BASE + "/" + b["slug"] + "/#book"}}]
+        first = re.sub("<[^>]+>", "", re.search(r"<p>(.*?)</p>", h, re.S).group(1))
+        desc = f"Chapter {n} of “{b['title']}” by Nona Dronova. " + (first[:150].rsplit(" ", 1)[0] + "…")
+        page(f'{b["slug"]}/{s}.html', f"{t} — Chapter {n}", desc, body, cur="library.html", og_image=b["cover"], og_type="article",
+             crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s}.html')], graph=g)
+
+def build_jade_book():
+    b = JADE
+    body = head_band(esc(b["title"]), f'<em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
+<section class="section">
+ <div class="wrap split cover-split narrow">
+  <div class="cover-placeholder" style="width:240px" role="img" aria-label="Book cover placeholder"><span class="a">Nona Dronova</span><span class="t">{esc(b["orig"])}</span><span class="s">Forthcoming</span></div>
+  <div class="prose">
+   <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{b["kind"]}</dd><dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>In preparation</dd></dl>
+   <p>The second monograph of the library is devoted to antique Chinese jade (nephrite): the stone and its imitations, the techniques of carving, and the surface evidence by which an ancient carving can be distinguished from a modern one.</p>
+   <p>The English edition will be published here chapter by chapter, as with the porcelain monograph.</p>
+   <p><a class="btn" href="/jade-bronze.html#jade">Jade in this library</a></p>
+  </div>
+ </div>
+</section>'''
+    page(b["slug"] + "/index.html", b["title"], "Monograph by Nona Dronova on antique Chinese jade (nephrite): identification, carving techniques and authentication. English edition in preparation.",
+         body, cur="library.html", og_image="/images/jade-bat.jpg", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
+         graph=[{"@type": "Book", "name": b["orig"], "alternateName": b["title"], "author": {"@id": PERSON_ID}, "inLanguage": "ru", "url": BASE + "/" + b["slug"] + "/"}])
+
+def build_author():
+    body = head_band("Professor Nona Dronova", "Doctor of Technical Sciences · Ph.D. in Geology and Mineralogy · Gemmologist", crumbs=[("About the Author", "author.html")], eyebrow="About the author") + f'''
+<section class="section">
+ <div class="wrap split cover-split">
+  <img src="/images/nona-dronova.jpg" alt="Professor Nona Dronova" width="380" height="500">
+  <div class="prose">
+   <dl class="facts">
+    <dt>Full name</dt><dd>Nona Dmitrievna Dronova</dd>
+    <dt>Degrees</dt><dd>Doctor of Technical Sciences (D.Sc. in Engineering); Ph.D. in Geology and Mineralogy; Professor</dd>
+    <dt>Experience</dt><dd>Forty years of gemmological practice</dd>
+    <dt>Positions</dt><dd>Chairperson of the Expert Collegium for Antique Authentication; Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics</dd>
+    <dt>Method</dt><dd>Dronova non-destructive optical authentication (gemmological optical microscopy, GOM / BEINOS method)</dd>
+    <dt>Art</dt><dd>Painter and art theorist; Member of the Union of Artists of Russia since 2002</dd>
+    <dt>ORCID</dt><dd><a href="{ORCID}" target="_blank" rel="noopener">0009-0007-4867-9074</a></dd>
+   </dl>
+   <h2>Research</h2>
+   <p>Professor Nona Dronova works at the intersection of art history, materials science and the technology of the traditional applied arts. Her research focuses on the instrumental and visual-structural diagnostics of works of decorative art, above all ancient Chinese porcelain, jade and bronze.</p>
+   <p>Her method moves step by step from the macroscopic level — proportions, silhouette, composition — to the microscopic and physico-chemical parameters of the surface: glaze structure, crackle, inclusions, firing traces and the signatures of natural ageing. Porcelain is thus read not only as a work of art, but as a technological document of its time.</p>
+   <h2>In this library</h2>
+   <ul>
+    <li><a href="/{PORCELAIN["slug"]}/">{esc(PORCELAIN["title"])}</a> ({PORCELAIN["year"]})</li>
+    <li><a href="/{JADE["slug"]}/">{esc(JADE["title"])}</a></li>
+    <li><a href="/publications.html">Zenodo publications</a></li>
+   </ul>
+   <h2>Other projects</h2>
+   <ul>
+    <li><a href="{ATLAS}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Ceramics</a></li>
+    <li><a href="{ATLAS_JB}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Jade and Bronze</a></li>
+    <li><a href="{STUDIO}" target="_blank" rel="noopener">Nona Dronova Art Studio</a> — painting, textile art and jewellery</li>
+   </ul>
+  </div>
+ </div>
+</section>'''
+    p = dict(PERSON); p["image"] = BASE + "/images/nona-dronova.jpg"
+    page("author.html", "About the Author — Professor Nona Dronova",
+         "Professor Nona Dronova: Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist, Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics.",
+         body, cur="author.html", og_image="/images/nona-dronova.jpg", og_type="profile", crumbs=[("About the Author", "author.html")],
+         graph=[{"@type": "ProfilePage", "url": BASE + "/author.html", "mainEntity": {"@id": PERSON_ID}}, p])
+
+def build_about():
+    body = head_band("About the Project", "A scientific digital library on the attribution and authentication of Chinese antiques.", crumbs=[("About the Project", "about.html")], eyebrow="Purpose") + f'''
+<section class="section"><div class="wrap prose">
+ <h2 style="margin-top:0">Purpose</h2>
+ <p><strong>Chinese Antiques — Scientific Library of Research and Attribution</strong> brings together, in English, the monographs, research papers and reference materials of Professor Nona Dronova on Chinese porcelain, jade and bronze.</p>
+ <p>The aim is to make the methods of expert attribution transparent and verifiable: to show not only the conclusions, but the evidence on which they rest and the limits of that evidence.</p>
+ <h2>Structure</h2>
+ <ul>
+  <li><strong>Library</strong> — the author's own works: monographs, articles and reference books.</li>
+  <li><strong>Diagnostic Atlas</strong> — documented reference objects with their diagnostic features.</li>
+  <li><strong>Scientific literature</strong> — the bibliography of sources by other scholars on which the research relies.</li>
+  <li><strong>Zenodo publications</strong> — open-access research papers with permanent DOIs.</li>
+ </ul>
+ <h2>Language</h2>
+ <p>The monographs were written and published in Russian. The English edition is prepared chapter by chapter; each chapter page gives the original Russian title. Terms of Chinese origin are given in pinyin, with Chinese characters where they help identification.</p>
+ <div class="note">Information on this site is provided for scientific and educational purposes. It does not constitute an authentication or valuation of any particular object.</div>
+</div></section>'''
+    page("about.html", "About the Project", "Purpose and structure of the Chinese Antiques scientific library: monographs, diagnostic atlas, literature and open-access publications on Chinese porcelain, jade and bronze.",
+         body, crumbs=[("About the Project", "about.html")], graph=[{"@type": "AboutPage", "url": BASE + "/about.html", "name": "About the Project"}])
+
+def build_literature():
+    cited = [
+        ("Arapova, T. B.", "Chinese Porcelain in the Hermitage Collection (Late 14th – First Third of the 18th Century). Catalogue.", "Leningrad, 1977. In Russian."),
+        ("Bogachikhin, M. M.", "Ceramics of China.", "Moscow, 1998. In Russian."),
+        ("Kuzmenko, L. I.", "Chinese Porcelain of the 17th–18th Centuries.", "State Museum of Oriental Art, Moscow, 2009. In Russian."),
+    ]
+    li = "".join(f'<li>{esc(a)} <em>{esc(t)}</em> {esc(p)}</li>' for a, t, p in cited)
+    body = head_band("Scientific Literature", "Bibliography of works by other scholars on which the research in this library relies. The author's own works are listed in the Library.",
+                     crumbs=[("Scientific Literature", "literature.html")], eyebrow="Bibliography") + f'''
+<section class="section"><div class="wrap prose">
+ <h2 style="margin-top:0">Porcelain</h2>
+ <p>Sources cited in <a href="/{PORCELAIN["slug"]}/"><em>{esc(PORCELAIN["title"])}</em></a>:</p>
+ <ul class="biblio">{li}</ul>
+ <div class="note">The bibliography is being expanded as further chapters of the monographs are translated. Sources for jade and bronze will be added with the jade monograph.</div>
+</div></section>'''
+    page("literature.html", "Scientific Literature — Bibliography", "Bibliography of scholarly sources on Chinese porcelain, jade and bronze used in the research of the Chinese Antiques scientific library.",
+         body, crumbs=[("Scientific Literature", "literature.html")], graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature"}])
+
+def build_publications():
+    pubs = [
+        ("Methodological Foundations of Genetic Analysis in Authenticity Diagnostics of Ancient Chinese Porcelain (New Approaches by Prof. Nona Dronova)", "2025", "16755260"),
+        ("The Dry Earth Effect (DEE) and Optical Depth in Ru Yao Glaze: A New Diagnostic Framework", "2025", "16724189"),
+        ("Scientific Diagnostic Framework for Authenticating Ancient Chinese Porcelain", "2026", "21081327"),
+        ("Optical Microstructural Diagnostics of Chinese Porcelain Glazes: Six Criteria for Distinguishing Authentic Song–Yuan Production from Modern Reproduction", "2026", "21196249"),
+        ("Gemological Optical Microscopy as a Non-Destructive Diagnostic Method for Authenticating Ru Yao Ceramics of the Northern Song Dynasty", "2026", "20777296"),
+    ]
+    li = "".join(f'<li><div class="pt">{esc(t)}</div><div class="pm">Nona Dronova · {y} · <a href="https://doi.org/10.5281/zenodo.{d}" target="_blank" rel="noopener">doi:10.5281/zenodo.{d}</a></div></li>' for t, y, d in pubs)
+    body = head_band("Zenodo Publications", "Open-access scientific papers by Professor Nona Dronova, each archived on Zenodo with a permanent DOI.",
+                     crumbs=[("Zenodo Publications", "publications.html")], eyebrow="Open access") + f'''
+<section class="section"><div class="wrap prose">
+ <p>More than 240 records are published in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em> (CC BY 4.0). The complete index, grouped by dynasty and linked to the reference objects, is maintained in the Atlas.</p>
+ <p><a class="btn btn-gold" href="{ATLAS}publications.html" target="_blank" rel="noopener">Full index of publications ↗</a> <a class="btn" href="{ORCID}" target="_blank" rel="noopener">ORCID profile ↗</a></p>
+ <h2>Selected methodological papers</h2>
+ <ul class="pubs">{li}</ul>
+ <h2>Monographs on Zenodo</h2>
+ <p>Zenodo records of the two monographs, with their DOIs, will be listed here.</p>
+</div></section>'''
+    page("publications.html", "Zenodo Publications — Open-Access Research with DOI", "Open-access scientific publications by Professor Nona Dronova on the authentication of Chinese porcelain, archived on Zenodo with DOI.",
+         body, crumbs=[("Zenodo Publications", "publications.html")],
+         graph=[{"@type": "CollectionPage", "url": BASE + "/publications.html", "name": "Zenodo Publications",
+                 "hasPart": [{"@type": "ScholarlyArticle", "name": t, "datePublished": y, "url": f"https://doi.org/10.5281/zenodo.{d}", "author": {"@id": PERSON_ID}} for t, y, d in pubs]}])
+
+def build_404():
+    body = head_band("Page not found", 'The page you are looking for does not exist. <a href="/index.html">Return to the home page</a>.')
+    page("404.html", "Page not found", "Page not found.", body)
+    PAGES.remove("404.html")
+
+def build_seo():
+    prio = {"index.html": "1.0", "library.html": "0.9", "porcelain.html": "0.9", "atlas.html": "0.9"}
+    urls = []
+    for p in PAGES:
+        loc = BASE + "/" + ("" if p == "index.html" else p.replace("index.html", ""))
+        urls.append(f"  <url><loc>{loc}</loc><lastmod>{TODAY}</lastmod><priority>{prio.get(p, '0.7')}</priority></url>")
+    open(os.path.join(ROOT, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
+    open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tools/\n\nSitemap: {BASE}/sitemap.xml\n")
+
+if __name__ == "__main__":
+    build_home(); build_porcelain(); build_jade_bronze(); build_atlas(); build_library()
+    build_porcelain_book(); build_chapters(); build_jade_book(); build_author(); build_about()
+    build_literature(); build_publications(); build_404(); build_seo()
+    print("\n".join(PAGES))

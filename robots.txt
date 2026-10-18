@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /tools/
+
+Sitemap: https://chinese-antiques-portal.vercel.app/sitemap.xml
