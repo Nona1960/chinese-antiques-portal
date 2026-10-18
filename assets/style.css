@@ -237,3 +237,9 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 .author-bio{max-width:820px}
 .author-bio h2{border-top:1px solid var(--border);padding-top:28px}
 .author-bio h2:first-child{border-top:0;padding-top:0;margin-top:0}
+.byline{font-size:.86rem;color:var(--ink-2);margin-top:6px;letter-spacing:.02em}
+.biblio-rec{background:var(--paper);border-left:3px solid var(--gold);padding:12px 16px;margin:12px 0;font-size:.84rem;line-height:1.55}
+.biblio-rec .eyebrow{font-size:.62rem;margin-bottom:6px}
+.biblio-rec p{margin:0 0 6px;color:var(--ink-2)}
+.biblio-rec p.ru{color:var(--muted);margin:0}
+.biblio-rec .udc{font-size:.78rem}

@@ -19,7 +19,7 @@ STUDIO = "https://nona-dronova-art-studio.vercel.app/"
 
 PERSON_ID = BASE + "/author.html#person"
 PERSON = {
-    "@type": "Person", "@id": PERSON_ID, "name": "Nona Dronova",
+    "@type": "Person", "@id": PERSON_ID, "name": "Nona Dmitrievna Dronova",
     "alternateName": "Nona Dmitrievna Dronova",
     "jobTitle": "Professor, Doctor of Technical Sciences; Chair of the Collegium of Expert Gemmologists of the Russian Federation",
     "description": "Gemmologist and researcher; author of non-destructive methods for the authentication of Chinese porcelain (BEINOS, DEE, LIE, PLIC), jade (STA) and bronze (TETA).",
@@ -35,7 +35,7 @@ NAV = [("index.html", "Home"), ("porcelain.html", "Porcelain"), ("jade-bronze.ht
 
 FOOTER = [
     ("about.html", "About the Project", "Purpose and scope of the scientific library."),
-    ("author.html", "About the Author", "Biography and research of Professor Nona Dronova."),
+    ("author.html", "About the Author", "Biography and research of Professor Nona Dmitrievna Dronova."),
     ("literature.html", "Scientific Literature", "The author’s scientific articles on Zenodo."),
     ("library.html", "Library", "Monographs, articles and reference works."),
     ("publications.html", "Zenodo Publications", "Open-access research papers with DOI."),
@@ -48,6 +48,8 @@ PORCELAIN = {
     "orig": "Что надо знать о старинном китайском фарфоре",
     "kind": "Reference encyclopaedia",
     "year": "2016", "place": "Moscow", "isbn": "978-5-9908782-6-6", "doi": "10.5281/zenodo.16794377",
+    "publisher": "KEM Printing House LLC", "publisher_ru": "ООО «Типография КЕМ»", "pages": "288", "udc": "621.315.612", "bbk": "35.41+65.304.9",
+    "kind_ru": "Справочник-энциклопедия",
     "cover": "/images/porcelain-book-cover.jpg",
     "abstract": ("A reference encyclopaedia that provides the information needed to attribute antique Chinese "
                  "porcelain in accordance with international standards. Separate chapters are devoted to the "
@@ -74,7 +76,9 @@ JADE = {
     "subtitle": "A Handbook in Questions and Answers",
     "orig": "Что надо знать о старинном китайском нефрите",
     "kind": "Handbook in questions and answers",
-    "year": "2017", "place": "Moscow", "isbn": None, "cover": "/images/jade-book-cover.jpg", "doi": "10.5281/zenodo.16794851",
+    "year": "2017", "place": "Moscow", "isbn": "978-5-9909531-3-0", "cover": "/images/jade-book-cover.jpg", "doi": "10.5281/zenodo.16794851",
+    "publisher": "KEM LLC", "publisher_ru": "ООО «КЕМ»", "pages": "196", "udc": "621.315.612", "bbk": "35.41+65.304.9",
+    "kind_ru": "Справочник в виде вопросов и ответов",
     "abstract": ("A handbook in the form of questions and answers on the natural ageing of jade in burials and the "
                  "diagnostic signs of its antiquity. Particular attention is given to the causes of the characteristic "
                  "ring-shaped iron-rich formations crystallised on the surface of carved artefacts and to the zoning of "
@@ -130,14 +134,20 @@ def toc_html(b, prefix):
 
 def cover_html(b, cls="cover", width=None):
     if b["cover"]:
-        return f'<img class="{cls}" src="{b["cover"]}" alt="Cover of the book «{esc(b["orig"])}» by Nona Dronova" loading="lazy">'
+        return f'<img class="{cls}" src="{b["cover"]}" alt="Cover of the book «{esc(b["orig"])}» by Nona Dmitrievna Dronova" loading="lazy">'
     st = f' style="width:{width}px"' if width else ""
-    return (f'<div class="cover-placeholder"{st} role="img" aria-label="Title of the book"><span class="a">Nona Dronova</span>'
+    return (f'<div class="cover-placeholder"{st} role="img" aria-label="Title of the book"><span class="a">Nona Dmitrievna Dronova</span>'
             f'<span class="t">{esc(b["orig"])}</span><span class="s">{esc(b["place"])} · {b["year"]}</span></div>')
 
 def book_meta(b):
-    m = f'{b["kind"]} · {b["place"]}, {b["year"]}'
-    return m + (f' · ISBN {b["isbn"]}' if b["isbn"] else "")
+    return f'{b["kind"]} · {b["place"]}: {b["publisher"]}, {b["year"]} · {b["pages"]} pp. · ISBN {b["isbn"]}'
+
+def biblio_html(b, full=True):
+    en = (f'<strong>Dronova, Nona Dmitrievna.</strong> <em>{esc(b["orig"])}</em> [{esc(b["title"])}]: {esc(b["kind"].lower())}. '
+          f'{b["place"]}: {esc(b["publisher"])}, {b["year"]}. {b["pages"]} pp. ISBN {b["isbn"]}.')
+    ru = (f'Дронова Н. Д. {esc(b["orig"])}: {esc(b["kind_ru"].lower())}. — М.: {esc(b["publisher_ru"])}, {b["year"]}. — {b["pages"]} с. — ISBN {b["isbn"]}.')
+    extra = f'<br><span class="udc">UDC {b["udc"]} · BBK {b["bbk"]}</span>' if full else ""
+    return f'<div class="biblio-rec"><span class="eyebrow">Bibliographic record</span><p>{en}</p><p class="ru">{ru}{extra}</p></div>'
 
 # ------------------------------------------------------------------ layout
 def header(cur):
@@ -147,7 +157,7 @@ def header(cur):
 <header class="site-header">
  <div class="wrap header-inner">
   <a class="brand" href="/index.html" aria-label="{SITE} — home">
-   <img src="/images/sun-logo-rect.jpg" alt="Sun emblem of the Chinese Antiques library — painting by Nona Dronova" width="62" height="48">
+   <img src="/images/sun-logo-rect.jpg" alt="Sun emblem of the Chinese Antiques library — painting by Nona Dmitrievna Dronova" width="62" height="48">
    <span><span class="brand-name">CHINESE ANTIQUES</span><span class="brand-tag">{TAGLINE}</span></span>
   </a>
   <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))"><span></span><span></span><span></span></button>
@@ -160,7 +170,7 @@ def footer():
     return f'''<footer class="site-footer">
  <div class="wrap footer-grid">
   <div class="footer-brand">
-   <img src="/images/sun-logo-rect.jpg" alt="Sun emblem — painting by Nona Dronova" width="96" height="74" loading="lazy">
+   <img src="/images/sun-logo-rect.jpg" alt="Sun emblem — painting by Nona Dmitrievna Dronova" width="96" height="74" loading="lazy">
    <div class="n">CHINESE ANTIQUES</div>
    <p>{TAGLINE}<br>Porcelain · Jade · Bronze</p>
    <a class="btn btn-small btn-gold" href="/index.html" style="margin-top:14px">← Back to Home</a>
@@ -168,7 +178,7 @@ def footer():
   {cols}
  </div>
  <div class="wrap footer-bottom">
-  <span>&copy; 2026 Nona Dronova. All rights reserved.</span>
+  <span>&copy; 2026 Nona Dmitrievna Dronova. All rights reserved. Author of all texts, monographs and research: Professor Nona Dmitrievna Dronova.</span>
   <span><a href="{ORCID}" target="_blank" rel="noopener">ORCID 0009-0007-4867-9074</a> · <a href="{ATLAS}" target="_blank" rel="noopener">Diagnostic Atlas</a> · <a href="{STUDIO}" target="_blank" rel="noopener">Art Studio</a></span>
  </div>
 </footer>'''
@@ -193,7 +203,7 @@ def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_t
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{esc(full_title)}</title>
 <meta name="description" content="{esc(desc)}">
-<meta name="author" content="Nona Dronova">
+<meta name="author" content="Nona Dmitrievna Dronova">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="{url}">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -248,8 +258,8 @@ def book_card(b, link=True):
     ch = sum(1 for c in b["chapters"] if available(b, c[0]))
     tag = f'<span class="tag">English · {ch} of {len(b["chapters"])} parts online</span>'
     more = f'<p style="margin-top:14px"><a class="btn" href="/{b["slug"]}/">Open the book</a></p>' if link else ""
-    return (f'<article class="book">{cover_html(b)}<div class="book-body"><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
-            f'<div class="meta">{esc(book_meta(b))}</div><p>{esc(b["abstract"])}</p>{pdf_note(b, True)}<div class="book-actions">{tag}{more}</div></div></article>')
+    return (f'<article class="book">{cover_html(b)}<div class="book-body"><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div><div class="byline">Author: Nona Dmitrievna Dronova</div>'
+            f'{biblio_html(b)}<p>{esc(b["abstract"])}</p>{pdf_note(b, True)}<div class="book-actions">{tag}{more}</div></div></article>')
 
 # ------------------------------------------------------------------ pages
 def build_home():
@@ -271,6 +281,7 @@ def build_home():
    <p class="sub">Scientific Library of Research and Attribution</p>
    <p class="fields">Porcelain · Jade · Bronze</p>
    <p class="desc">Author's monographs, scientific publications and reference materials on the expert examination and authentication of Chinese works of art.</p>
+   <p class="byline" style="margin-top:14px">Author: Professor Nona Dmitrievna Dronova</p>
    <div class="actions"><a class="btn btn-gold" href="/library.html">Enter the Library</a><a class="btn" href="/atlas.html">Diagnostic Atlas</a></div>
   </div>
   <div class="photo-grid">{figs}</div>
@@ -292,7 +303,7 @@ def build_home():
 <section class="section alt">
  <div class="wrap">
   <div class="section-head"><span class="eyebrow">Scientific publications of the author</span><h2>Monographs</h2>
-  <p>The foundation of the library: two reference monographs by Professor Nona Dronova, published in Russian and presented here in English translation.</p>
+  <p>The foundation of the library: two reference monographs by Professor Nona Dmitrievna Dronova, published in Russian and presented here in English translation.</p>
   <p>The original printed editions are available in full as PDF files, attached to two open-access articles on Zenodo that examine the contemporary relevance of each monograph: <a href="https://doi.org/{PORCELAIN["pdf"]["doi"]}" target="_blank" rel="noopener">porcelain (doi:{PORCELAIN["pdf"]["doi"]})</a> and <a href="https://doi.org/{JADE["pdf"]["doi"]}" target="_blank" rel="noopener">jade (doi:{JADE["pdf"]["doi"]})</a>.</p></div>
   <div class="books">{book_card(PORCELAIN)}{book_card(JADE)}</div>
  </div>
@@ -309,18 +320,18 @@ def build_home():
 
 <section class="section alt">
  <div class="wrap split rev">
-  <div class="prose"><span class="eyebrow">About the author</span><h2 style="margin-top:0">Professor Nona Dronova</h2>
+  <div class="prose"><span class="eyebrow">About the author</span><h2 style="margin-top:0">Professor Nona Dmitrievna Dronova</h2>
   <p>Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist with more than forty years of practice; Chair of the Collegium of Expert Gemmologists of the Russian Federation and Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics.</p>
   <p>Author of non-destructive methods for the authentication of Chinese porcelain (BEINOS, DEE, LIE, PLIC), jade (STA) and bronze (TETA).</p>
   <p><a class="btn" href="/author.html">Read the biography</a></p></div>
-  <img src="/images/nona-dronova.jpg" alt="Professor Nona Dronova" loading="lazy" style="max-width:420px;justify-self:center">
+  <img src="/images/nona-dronova.jpg" alt="Professor Nona Dmitrievna Dronova" loading="lazy" style="max-width:420px;justify-self:center">
  </div>
 </section>'''
     graph = [{"@type": "WebPage", "@id": BASE + "/#webpage", "url": BASE + "/", "name": "Chinese Antiques — Scientific Library of Research and Attribution",
               "isPartOf": {"@id": BASE + "/#website"}, "about": ["Chinese porcelain", "Chinese jade", "Chinese bronze"], "author": {"@id": PERSON_ID}},
              PERSON]
     page("index.html", "Chinese Antiques — Scientific Library of Research and Attribution · Porcelain, Jade, Bronze",
-         "Scientific library and expert reference on Chinese antiques by Professor Nona Dronova: monographs, research and methods for the attribution and authentication of porcelain, jade and bronze.",
+         "Scientific library and expert reference on Chinese antiques by Professor Nona Dmitrievna Dronova: monographs, research and methods for the attribution and authentication of porcelain, jade and bronze.",
          body, cur="index.html", graph=graph)
 
 def build_porcelain():
@@ -477,8 +488,8 @@ def build_library():
   <p><a class="btn" href="/literature.html">Scientific literature</a></p></div>
  </div>
 </section>'''
-    page("library.html", "Library — Monographs and Research by Nona Dronova",
-         "Monographs, scientific articles and reference materials by Professor Nona Dronova on the attribution and authentication of Chinese porcelain, jade and bronze.",
+    page("library.html", "Library — Monographs and Research by Nona Dmitrievna Dronova",
+         "Monographs, scientific articles and reference materials by Professor Nona Dmitrievna Dronova on the attribution and authentication of Chinese porcelain, jade and bronze.",
          body, cur="library.html", og_image="/images/porcelain-book-cover.jpg", crumbs=[("Library", "library.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/library.html", "name": "Library", "author": {"@id": PERSON_ID},
                  "hasPart": [{"@id": BASE + "/" + b["slug"] + "/#book"} for b in BOOKS]}])
@@ -491,6 +502,8 @@ def book_graph(b):
          "description": b["abstract"], "genre": b["kind"],
          "workTranslation": {"@type": "Book", "name": b["title"], "inLanguage": "en", "url": url, "hasPart": parts}}
     if b["isbn"]: g["isbn"] = b["isbn"]
+    g["publisher"] = {"@type": "Organization", "name": b["publisher"], "alternateName": b["publisher_ru"]}
+    g["numberOfPages"] = int(b["pages"])
     g["sameAs"] = ["https://doi.org/" + b["pdf"]["doi"], "https://doi.org/" + b["doi"]]
     g["subjectOf"] = {"@type": "ScholarlyArticle", "name": b["pdf"]["title"], "datePublished": b["pdf"]["year"], "url": "https://doi.org/" + b["pdf"]["doi"], "author": {"@id": PERSON_ID}}
     g["identifier"] = {"@type": "PropertyValue", "propertyID": "DOI", "value": b["doi"]}
@@ -506,16 +519,18 @@ def build_book(b):
  <div class="wrap split cover-split">
   {cover_html(b, "cover-lg", 300)}
   <div class="prose">
-   <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{esc(b["kind"])}</dd><dt>Published</dt><dd>{b["place"]}, {b["year"]}</dd>{isbn}<dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>Published chapter by chapter on this site</dd></dl>
+   <dl class="facts"><dt>Author</dt><dd>Nona Dmitrievna Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{esc(b["kind"])}</dd><dt>Original title</dt><dd>{esc(b["orig"])}: {esc(b["kind_ru"].lower())}</dd><dt>Publisher</dt><dd>{b["place"]}: {esc(b["publisher"])} ({esc(b["publisher_ru"])}), {b["year"]}</dd><dt>Extent</dt><dd>{b["pages"]} pages</dd>{isbn}<dt>UDC · BBK</dt><dd>{b["udc"]} · {b["bbk"]}</dd><dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>Published chapter by chapter on this site</dd></dl>
+   {biblio_html(b)}
    <h2>Abstract</h2><p>{esc(b["abstract"])}</p>
    {pdf_note(b)}
+   <p style="font-size:.85rem;color:var(--muted)">The author thanks the SUNLIGHT company for its assistance in the preparation of this book.</p>
   </div>
  </div>
 </section>
 <section class="section alt">
  <div class="wrap"><div class="section-head"><h2>Contents</h2></div>{toc_html(b, "")}</div>
 </section>'''
-    page(b["slug"] + "/index.html", f'{b["title"]}: {b["subtitle"]}', f'{b["title"]} by Nona Dronova ({b["place"]}, {b["year"]}). ' + b["abstract"][:110].rsplit(" ", 1)[0] + "… English edition.",
+    page(b["slug"] + "/index.html", f'{b["title"]}: {b["subtitle"]}', f'{b["title"]} by Nona Dmitrievna Dronova ({b["place"]}, {b["year"]}). ' + b["abstract"][:110].rsplit(" ", 1)[0] + "… English edition.",
          body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="book", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
          graph=[book_graph(b)])
 
@@ -545,8 +560,9 @@ def build_chapters(b):
   <span class="eyebrow">{label(n)}</span>
   <h1>{esc(t)}</h1>
   <p style="font-family:var(--serif);font-style:italic;color:var(--muted);margin-top:-.6em">{esc(o)}</p>
+  <p class="byline">Author: Nona Dmitrievna Dronova</p>
   {h}
-  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Nona Dronova, <em>{esc(b["title"])}</em> (<em>{esc(b["orig"])}</em>). {b["place"]}, {b["year"]}.{isbn} English translation. The original Russian edition is available as a PDF via <a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">doi:{b["pdf"]["doi"]}</a>.</p>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Dronova, Nona Dmitrievna. <em>{esc(b["orig"])}</em> [<em>{esc(b["title"])}</em>]: {esc(b["kind"].lower())}. {b["place"]}: {esc(b["publisher"])}, {b["year"]}. {b["pages"]} pp. ISBN {b["isbn"]}. English translation. The original Russian edition is available as a PDF via <a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">doi:{b["pdf"]["doi"]}</a>.</p>
   {nav}
  </article>
 </div>'''
@@ -556,7 +572,7 @@ def build_chapters(b):
               "inLanguage": "en", "wordCount": words, "author": {"@id": PERSON_ID},
               "isPartOf": {"@id": BASE + "/" + b["slug"] + "/#book"}}]
         first = re.sub("<[^>]+>", "", re.search(r"<p>(.*?)</p>", h, re.S).group(1))
-        desc = f"{label(n)} of “{b['title']}” by Nona Dronova. " + (first[:150].rsplit(" ", 1)[0] + "…")
+        desc = f"{label(n)} of “{b['title']}” by Nona Dmitrievna Dronova. " + (first[:150].rsplit(" ", 1)[0] + "…")
         page(f'{b["slug"]}/{s_}.html', f"{t} — {label(n)}" if n else f"{t} — {b['title']}", desc, body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="article",
              crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s_}.html')], graph=g)
 
@@ -601,7 +617,7 @@ def build_author():
 </div></section>'''
     p = dict(PERSON); p["image"] = BASE + "/images/nona-dronova.jpg"
     page("author.html", "About the Author — Professor Nona Dmitrievna Dronova",
-         "Professor Nona Dronova: Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist. Her methods for the non-destructive authentication of Chinese porcelain, jade and bronze: BEINOS, DEE, LIE, PLIC, STA and TETA.",
+         "Professor Nona Dmitrievna Dronova: Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist. Her methods for the non-destructive authentication of Chinese porcelain, jade and bronze: BEINOS, DEE, LIE, PLIC, STA and TETA.",
          body, cur="author.html", og_image="/images/nona-dronova.jpg", og_type="profile", crumbs=[("About the Author", "author.html")],
          graph=[{"@type": "ProfilePage", "url": BASE + "/author.html", "mainEntity": {"@id": PERSON_ID}}, p])
 
@@ -609,7 +625,7 @@ def build_about():
     body = head_band("About the Project", "A scientific digital library on the attribution and authentication of Chinese antiques.", crumbs=[("About the Project", "about.html")], eyebrow="Purpose") + f'''
 <section class="section"><div class="wrap prose">
  <h2 style="margin-top:0">Purpose</h2>
- <p><strong>Chinese Antiques — Scientific Library of Research and Attribution</strong> brings together, in English, the monographs, research papers and reference materials of Professor Nona Dronova on Chinese porcelain, jade and bronze.</p>
+ <p><strong>Chinese Antiques — Scientific Library of Research and Attribution</strong> brings together, in English, the monographs, research papers and reference materials of Professor Nona Dmitrievna Dronova on Chinese porcelain, jade and bronze.</p>
  <p>The aim is to make the methods of expert attribution transparent and verifiable: to show not only the conclusions, but the evidence on which they rest and the limits of that evidence.</p>
  <h2>Structure</h2>
  <ul>
@@ -642,7 +658,7 @@ def build_literature():
                 repo = "Zenodo" if "zenodo" in doi else "Figshare"
                 obj = (" · Atlas object " + ", ".join(it["objects"])) if it.get("objects") else ""
                 lis.append(f'<li><div class="pt"><a href="{esc(it["url"])}" target="_blank" rel="noopener">{esc(it["title"])}</a></div>'
-                           f'<div class="pm">Dronova, N. · {esc(it["year"])} · {repo} · doi:{esc(doi)}{esc(obj)}</div></li>')
+                           f'<div class="pm">Dronova, Nona Dmitrievna · {esc(it["year"])} · {repo} · doi:{esc(doi)}{esc(obj)}</div></li>')
                 arts.append({"@type": "ScholarlyArticle", "name": it["title"], "datePublished": it["year"], "url": it["url"], "author": {"@id": PERSON_ID}})
             span = f'{esc(g["span"])} · ' if g["span"] else ""
             out.append(f'<h3 id="{g["id"]}">{esc(g["title"])} <small style="font-family:var(--sans);font-size:.85rem;color:var(--muted)">{span}{len(g["items"])}</small></h3><ul class="pubs">{"".join(lis)}</ul>')
@@ -651,7 +667,7 @@ def build_literature():
     jump = lambda groups: " ".join(f'<a class="tag" href="#{g["id"]}">{esc(short(g["title"]))}</a>' for g in groups)
     por_html, jad_html = render(por), render(jad)
     total = np_ + nj
-    body = head_band("Scientific Literature", f"The scientific articles of Professor Nona Dronova: {total} open-access publications with DOI on the authentication of ancient Chinese porcelain, jade and bronze.",
+    body = head_band("Scientific Literature", f"The scientific articles of Professor Nona Dmitrievna Dronova: {total} open-access publications with DOI on the authentication of ancient Chinese porcelain, jade and bronze.",
                      crumbs=[("Scientific Literature", "literature.html")], eyebrow="Author’s scientific articles") + f'''
 <section class="section"><div class="wrap prose" style="max-width:900px">
  <p>All articles are published in open access (CC BY 4.0), most of them in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em>, each with a permanent DOI. The lists follow the publication indexes of the <a href="{ATLAS}publications.html" target="_blank" rel="noopener">Diagnostic Atlas of Chinese Porcelain</a> and the <a href="{ATLAS_JB}publications.html" target="_blank" rel="noopener">Atlas of Ancient Jade and Bronze</a>.</p>
@@ -663,7 +679,7 @@ def build_literature():
  <p style="display:flex;flex-wrap:wrap;gap:6px">{jump(jad)}</p>
  {jad_html}
 </div></section>'''
-    page("literature.html", "Scientific Literature — Articles by Nona Dronova", f"{total} open-access scientific articles by Professor Nona Dronova on the authentication of ancient Chinese porcelain, jade and bronze, with DOI.",
+    page("literature.html", "Scientific Literature — Articles by Nona Dmitrievna Dronova", f"{total} open-access scientific articles by Professor Nona Dmitrievna Dronova on the authentication of ancient Chinese porcelain, jade and bronze, with DOI.",
          body, crumbs=[("Scientific Literature", "literature.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature", "author": {"@id": PERSON_ID},
                  "mainEntity": {"@type": "ItemList", "numberOfItems": total,
@@ -671,14 +687,14 @@ def build_literature():
 
 def build_publications():
     pubs = [
-        ("Methodological Foundations of Genetic Analysis in Authenticity Diagnostics of Ancient Chinese Porcelain (New Approaches by Prof. Nona Dronova)", "2025", "16755260"),
+        ("Methodological Foundations of Genetic Analysis in Authenticity Diagnostics of Ancient Chinese Porcelain (New Approaches by Prof. Nona Dmitrievna Dronova)", "2025", "16755260"),
         ("The Dry Earth Effect (DEE) and Optical Depth in Ru Yao Glaze: A New Diagnostic Framework", "2025", "16724189"),
         ("Scientific Diagnostic Framework for Authenticating Ancient Chinese Porcelain", "2026", "21081327"),
         ("Optical Microstructural Diagnostics of Chinese Porcelain Glazes: Six Criteria for Distinguishing Authentic Song–Yuan Production from Modern Reproduction", "2026", "21196249"),
         ("Gemological Optical Microscopy as a Non-Destructive Diagnostic Method for Authenticating Ru Yao Ceramics of the Northern Song Dynasty", "2026", "20777296"),
     ]
-    li = "".join(f'<li><div class="pt">{esc(t)}</div><div class="pm">Nona Dronova · {y} · <a href="https://doi.org/10.5281/zenodo.{d}" target="_blank" rel="noopener">doi:10.5281/zenodo.{d}</a></div></li>' for t, y, d in pubs)
-    body = head_band("Zenodo Publications", "Open-access scientific papers by Professor Nona Dronova, each archived on Zenodo with a permanent DOI.",
+    li = "".join(f'<li><div class="pt">{esc(t)}</div><div class="pm">Nona Dmitrievna Dronova · {y} · <a href="https://doi.org/10.5281/zenodo.{d}" target="_blank" rel="noopener">doi:10.5281/zenodo.{d}</a></div></li>' for t, y, d in pubs)
+    body = head_band("Zenodo Publications", "Open-access scientific papers by Professor Nona Dmitrievna Dronova, each archived on Zenodo with a permanent DOI.",
                      crumbs=[("Zenodo Publications", "publications.html")], eyebrow="Open access") + f'''
 <section class="section"><div class="wrap prose">
  <p>Several hundred records are published in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em> (CC BY 4.0). The complete index, grouped by dynasty and linked to the reference objects, is maintained in the Atlas.</p>
@@ -687,12 +703,12 @@ def build_publications():
  <ul class="pubs">{li}</ul>
  <h2>Monographs on Zenodo</h2>
  <p>The complete original Russian editions of both monographs are attached as PDF files to these open-access articles:</p>
- <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">{esc(b["pdf"]["title"])}</a></div><div class="pm">Nona Dronova · Zenodo, {b["pdf"]["date"]} · doi:{b["pdf"]["doi"]} · includes the PDF of the {b["year"]} edition · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
+ <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">{esc(b["pdf"]["title"])}</a></div><div class="pm">Nona Dmitrievna Dronova · Zenodo, {b["pdf"]["date"]} · doi:{b["pdf"]["doi"]} · includes the PDF of the {b["year"]} edition · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
  <p>Earlier Zenodo records of the monographs:</p>
- <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">{esc(b["title"])}: {esc(b["subtitle"])}</a></div><div class="pm">Nona Dronova · original edition {b["place"]}, {b["year"]} · doi:{b["doi"]} · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
- <p><a href="https://zenodo.org/search?q=metadata.creators.person_or_org.name:%22NONA,+Dronova%22" target="_blank" rel="noopener">All records by Nona Dronova on Zenodo ↗</a> · <a href="/literature.html">Complete list of articles on this site</a></p>
+ <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">{esc(b["title"])}: {esc(b["subtitle"])}</a></div><div class="pm">Nona Dmitrievna Dronova · original edition {b["place"]}, {b["year"]} · doi:{b["doi"]} · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
+ <p><a href="https://zenodo.org/search?q=metadata.creators.person_or_org.name:%22NONA,+Dronova%22" target="_blank" rel="noopener">All records by Nona Dmitrievna Dronova on Zenodo ↗</a> · <a href="/literature.html">Complete list of articles on this site</a></p>
 </div></section>'''
-    page("publications.html", "Zenodo Publications — Open-Access Research with DOI", "Open-access scientific publications by Professor Nona Dronova on the authentication of Chinese porcelain, archived on Zenodo with DOI.",
+    page("publications.html", "Zenodo Publications — Open-Access Research with DOI", "Open-access scientific publications by Professor Nona Dmitrievna Dronova on the authentication of Chinese porcelain, archived on Zenodo with DOI.",
          body, crumbs=[("Zenodo Publications", "publications.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/publications.html", "name": "Zenodo Publications",
                  "hasPart": [{"@type": "ScholarlyArticle", "name": t, "datePublished": y, "url": f"https://doi.org/10.5281/zenodo.{d}", "author": {"@id": PERSON_ID}} for t, y, d in pubs]}])
