@@ -243,3 +243,17 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 .biblio-rec p{margin:0 0 6px;color:var(--ink-2)}
 .biblio-rec p.ru{color:var(--muted);margin:0}
 .biblio-rec .udc{font-size:.78rem}
+
+/* ---------- Audit 18 Oct: never crop photographs ---------- */
+.split > img{object-fit:contain;background:#f1efeb}
+.feature img{object-fit:contain;background:#f1efeb}
+.split.equal{align-items:stretch}
+.split.equal > .prose{display:flex;flex-direction:column}
+.split.equal > .prose > p:last-child{margin-top:auto}
+
+/* ---------- Images inside <picture> (responsive WebP) ---------- */
+picture{display:block}
+.split > picture{align-self:center}
+.split > picture > img,.split > img{width:auto;max-width:100%;max-height:600px;margin:0 auto;object-fit:contain;background:none;border:1px solid var(--border)}
+.cover-split > picture > img,.cover-split > img{max-height:none}
+.split > picture.contain-wrap > img{max-height:640px}

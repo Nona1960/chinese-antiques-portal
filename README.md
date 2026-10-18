@@ -18,3 +18,10 @@ python3 tools/build.py
 ```
 
 Hosted on Vercel (static, no build step).
+
+## Quality check
+
+Serve the site locally (`python3 -m http.server 8765`) and run `python3 tools/audit.py`.
+It checks every page at 1366, 768 and 390 px: broken links and anchors, missing images,
+horizontal overflow, cropped photographs, button alignment, Back to Home, titles,
+descriptions, H1 and structured data.

@@ -149,6 +149,64 @@ def biblio_html(b, full=True):
     extra = f'<br><span class="udc">UDC {b["udc"]} · BBK {b["bbk"]}</span>' if full else ""
     return f'<div class="biblio-rec"><span class="eyebrow">Bibliographic record</span><p>{en}</p><p class="ru">{ru}{extra}</p></div>'
 
+# ------------------------------------------------------------------ images
+from PIL import Image as _Image
+_IMG_CACHE = {}
+SKIP_RESPONSIVE = ("og-", "sun-logo")
+
+def prepare_images():
+    d = os.path.join(ROOT, "images")
+    for f in os.listdir(d):
+        if not f.endswith(".jpg") or f.startswith(SKIP_RESPONSIVE):
+            continue
+        src = os.path.join(d, f); stem = f[:-4]
+        im = None
+        for suffix, width in (("", 1000), ("-480", 480)):
+            out = os.path.join(d, f"{stem}{suffix}.webp")
+            if os.path.exists(out) and os.path.getmtime(out) >= os.path.getmtime(src):
+                continue
+            im = im or _Image.open(src).convert("RGB")
+            w = min(width, im.width)
+            im.resize((w, round(im.height * w / im.width)), _Image.LANCZOS).save(out, "WEBP", quality=80, method=6)
+
+def img_size(rel):
+    if rel not in _IMG_CACHE:
+        try:
+            _IMG_CACHE[rel] = _Image.open(os.path.join(ROOT, rel.lstrip("/"))).size
+        except Exception:
+            _IMG_CACHE[rel] = None
+    return _IMG_CACHE[rel]
+
+def optimize_images(html):
+    """Wrap bare <img src="/images/x.jpg"> in <picture> with responsive WebP sources and real width/height."""
+    parts = re.split(r"(<picture>.*?</picture>)", html, flags=re.S)
+    def fix(m):
+        tag, src = m.group(0), m.group(1)
+        stem = src[:-4]
+        size = img_size(src)
+        if size and "height=" not in tag:
+            tag = tag.replace("<img ", f'<img width="{size[0]}" height="{size[1]}" ', 1)
+        elif size:
+            tag = re.sub(r'width="\d+" height="\d+"', f'width="{size[0]}" height="{size[1]}"', tag)
+        if "decoding=" not in tag:
+            tag = tag.replace("<img ", '<img decoding="async" ', 1)
+        name = os.path.basename(src)
+        if name.startswith(SKIP_RESPONSIVE) or not os.path.exists(os.path.join(ROOT, stem.lstrip("/") + ".webp")):
+            return tag
+        return (f'<picture><source type="image/webp" srcset="{stem}-480.webp 480w, {stem}.webp {min(1000, size[0]) if size else 1000}w" '
+                f'sizes="(max-width: 860px) 92vw, 420px">{tag}</picture>')
+    for i in range(0, len(parts), 2):
+        parts[i] = re.sub(r'<img [^>]*?src="(/images/[^"]+\.jpg)"[^>]*>', fix, parts[i])
+    for i in range(1, len(parts), 2):
+        p = parts[i]
+        m = re.search(r'src="(/images/[^"]+\.jpg)"', p)
+        if m:
+            stem = m.group(1)[:-4]; size = img_size(m.group(1))
+            p = re.sub(r'srcset="[^"]+\.webp"', f'srcset="{stem}-480.webp 480w, {stem}.webp {min(1000, size[0]) if size else 1000}w" sizes="(max-width: 860px) 46vw, 260px"', p, count=1)
+            if size: p = re.sub(r'width="\d+" height="\d+"', f'width="{size[0]}" height="{size[1]}"', p, count=1)
+        parts[i] = p
+    return "".join(parts)
+
 # ------------------------------------------------------------------ layout
 def header(cur):
     items = "".join(
@@ -183,10 +241,33 @@ def footer():
  </div>
 </footer>'''
 
+def og_dims(img):
+    sz = img_size(img)
+    return f'<meta property="og:image:width" content="{sz[0]}">\n<meta property="og:image:height" content="{sz[1]}">\n' if sz else ""
+
+def citation_meta(b, chapter=None, url=None):
+    m = [("citation_title", chapter if chapter else b["title"]),
+         ("citation_author", "Dronova, Nona Dmitrievna"),
+         ("citation_publication_date", b["year"]),
+         ("citation_publisher", b["publisher"]),
+         ("citation_isbn", b["isbn"]),
+         ("citation_doi", b["pdf"]["doi"]),
+         ("citation_language", "en"),
+         ("citation_abstract_html_url", url or "")]
+    if chapter:
+        m.insert(1, ("citation_inbook_title", b["title"]))
+    else:
+        m.append(("citation_num_pages", b["pages"]))
+    m += [("DC.creator", "Dronova, Nona Dmitrievna"), ("DC.title", chapter or b["title"]), ("DC.publisher", b["publisher"]),
+          ("DC.date", b["year"]), ("DC.identifier", "ISBN " + b["isbn"]), ("DC.language", "en")]
+    return "".join(f'<meta name="{k}" content="{esc(v)}">\n' for k, v in m if v)
+
 def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_type="website",
-         graph=None, crumbs=None, lang_note=None):
+         graph=None, crumbs=None, lang_note=None, extra_head="", robots="index, follow, max-image-preview:large, max-snippet:-1"):
     url = BASE + "/" + ("" if path == "index.html" else path)
-    full_title = title if path == "index.html" else f"{title} — {SITE}"
+    full_title = title if (path == "index.html" or len(title) > 48) else f"{title} — {SITE}"
+    if len(desc) > 158:
+        desc = desc[:155].rsplit(" ", 1)[0].rstrip(",;:·—") + "…"
     nodes = [{"@type": "WebSite", "@id": BASE + "/#website", "url": BASE + "/", "name": f"{SITE} — {TAGLINE}",
               "inLanguage": "en", "publisher": {"@id": PERSON_ID}}]
     if crumbs:
@@ -204,7 +285,7 @@ def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_t
 <title>{esc(full_title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="author" content="Nona Dmitrievna Dronova">
-<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="robots" content="{robots}">
 <link rel="canonical" href="{url}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -217,6 +298,7 @@ def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_t
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{BASE}{og_image}">
+{og_dims(og_image)}<meta property="og:image:alt" content="{esc(title)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(full_title)}">
 <meta name="twitter:description" content="{esc(desc)}">
@@ -225,7 +307,7 @@ def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_t
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
-<script type="application/ld+json">
+{extra_head}<script type="application/ld+json">
 {ld}
 </script>
 </head>
@@ -238,6 +320,7 @@ def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_t
 </body>
 </html>
 '''
+    doc = optimize_images(doc)
     out = os.path.join(ROOT, path)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w", encoding="utf-8").write(doc)
@@ -270,7 +353,7 @@ def build_home():
         ("jade-sun-god", "Sun God · Hongshan culture"),
     ]
     figs = "".join(
-        f'<figure><picture><source srcset="/images/{f}.webp" type="image/webp"><img src="/images/{f}.jpg" alt="{esc(a)}" width="480" height="640"{" loading=\"lazy\"" if i > 1 else ""}></picture><figcaption>{esc(a)}</figcaption></figure>'
+        f'<figure><picture><source srcset="/images/{f}.webp" type="image/webp"><img src="/images/{f}.jpg" alt="{esc(a)}" width="480" height="640"{" loading=\"lazy\"" if i > 1 else " fetchpriority=\"high\""}></picture><figcaption>{esc(a)}</figcaption></figure>'
         for i, (f, a) in enumerate(photos))
     body = f'''
 <section class="hero">
@@ -330,8 +413,8 @@ def build_home():
     graph = [{"@type": "WebPage", "@id": BASE + "/#webpage", "url": BASE + "/", "name": "Chinese Antiques — Scientific Library of Research and Attribution",
               "isPartOf": {"@id": BASE + "/#website"}, "about": ["Chinese porcelain", "Chinese jade", "Chinese bronze"], "author": {"@id": PERSON_ID}},
              PERSON]
-    page("index.html", "Chinese Antiques — Scientific Library of Research and Attribution · Porcelain, Jade, Bronze",
-         "Scientific library and expert reference on Chinese antiques by Professor Nona Dmitrievna Dronova: monographs, research and methods for the attribution and authentication of porcelain, jade and bronze.",
+    page("index.html", "Chinese Antiques — Scientific Library of Porcelain, Jade and Bronze",
+         "Scientific library by Professor Nona Dmitrievna Dronova: monographs, research and methods for the attribution and authentication of Chinese porcelain, jade and bronze.",
          body, cur="index.html", graph=graph)
 
 def build_porcelain():
@@ -363,7 +446,7 @@ def build_porcelain():
   <img src="/images/atlas-song-002-phase-sep.jpg" alt="Liquid–liquid phase separation in Ru-type glaze under the microscope, reference object RO-SONG-002" loading="lazy">
  </div>
 </section>'''
-    page("porcelain.html", "Antique Chinese Porcelain — Attribution, Styles and Authentication",
+    page("porcelain.html", "Antique Chinese Porcelain: Attribution and Authentication",
          "Antique Chinese porcelain: history, styles, symbols and marks, export, imperial and monochrome wares, and criteria for distinguishing genuine pieces from forgeries.",
          body, cur="porcelain.html", og_image="/images/celadon-vase.jpg", crumbs=[("Porcelain", "porcelain.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/porcelain.html", "name": "Antique Chinese Porcelain", "about": "Chinese porcelain", "author": {"@id": PERSON_ID}}])
@@ -394,7 +477,7 @@ def build_jade_bronze():
   <img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, Atlas reference object RO-BRONZE-036" loading="lazy">
  </div>
 </section>'''
-    page("jade-bronze.html", "Ancient Chinese Jade and Bronze — Materials and Authentication",
+    page("jade-bronze.html", "Ancient Chinese Jade and Bronze: Authentication",
          "Ancient Chinese jade and ritual bronze: materials, working techniques, surface alteration, patina and the diagnostic evidence of age.",
          body, cur="jade-bronze.html", og_image="/images/jade-bat.jpg", crumbs=[("Bronze & Jade", "jade-bronze.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/jade-bronze.html", "name": "Ancient Chinese Jade and Bronze", "about": ["Chinese jade", "Chinese bronze"], "author": {"@id": PERSON_ID}}])
@@ -463,7 +546,7 @@ def build_atlas():
   <p style="font-size:.85rem;color:var(--muted)">Attribution of reference objects follows their accompanying documentation; no independent authentication is claimed.</p></div>
  </div>
 </section>'''
-    page("atlas.html", "Diagnostic Atlas of Chinese Porcelain — Reference Collection",
+    page("atlas.html", "Diagnostic Atlas of Chinese Porcelain",
          "Diagnostic Atlas of Chinese Porcelain: documented reference objects with image, diagnostic feature, description, method of observation and limits of interpretation.",
          body, cur="atlas.html", og_image="/images/atlas-ming-028-anhua.jpg", crumbs=[("Diagnostic Atlas", "atlas.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/atlas.html", "name": "Diagnostic Atlas of Chinese Porcelain", "author": {"@id": PERSON_ID},
@@ -479,16 +562,16 @@ def build_library():
  </div>
 </section>
 <section class="section alt">
- <div class="wrap split">
+ <div class="wrap split equal">
   <div class="prose"><h2 style="margin-top:0">Scientific articles</h2>
-  <p>More than 240 open-access articles on the authentication of individual objects and on diagnostic method are published on Zenodo, each with its own DOI.</p>
+  <p>More than 280 open-access articles on the authentication of individual objects and on diagnostic method are published on Zenodo, each with its own DOI.</p>
   <p><a class="btn" href="/publications.html">Zenodo publications</a></p></div>
   <div class="prose"><h2 style="margin-top:0">Complete list of articles</h2>
   <p>All scientific articles of the author, grouped by dynasty and period, with their DOIs.</p>
   <p><a class="btn" href="/literature.html">Scientific literature</a></p></div>
  </div>
 </section>'''
-    page("library.html", "Library — Monographs and Research by Nona Dmitrievna Dronova",
+    page("library.html", "Library — Monographs by N. D. Dronova",
          "Monographs, scientific articles and reference materials by Professor Nona Dmitrievna Dronova on the attribution and authentication of Chinese porcelain, jade and bronze.",
          body, cur="library.html", og_image="/images/porcelain-book-cover.jpg", crumbs=[("Library", "library.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/library.html", "name": "Library", "author": {"@id": PERSON_ID},
@@ -530,9 +613,9 @@ def build_book(b):
 <section class="section alt">
  <div class="wrap"><div class="section-head"><h2>Contents</h2></div>{toc_html(b, "")}</div>
 </section>'''
-    page(b["slug"] + "/index.html", f'{b["title"]}: {b["subtitle"]}', f'{b["title"]} by Nona Dmitrievna Dronova ({b["place"]}, {b["year"]}). ' + b["abstract"][:110].rsplit(" ", 1)[0] + "… English edition.",
+    page(b["slug"] + "/index.html", b["title"], f'{b["title"]} by Nona Dmitrievna Dronova ({b["place"]}, {b["year"]}). ' + b["abstract"][:110].rsplit(" ", 1)[0] + "… English edition.",
          body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="book", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
-         graph=[book_graph(b)])
+         graph=[book_graph(b)], extra_head=citation_meta(b, url=BASE + "/" + b["slug"] + "/"))
 
 def md_to_html(path):
     return subprocess.run(["pandoc", path, "-f", "markdown", "-t", "html5", "--wrap=none"],
@@ -573,8 +656,9 @@ def build_chapters(b):
               "isPartOf": {"@id": BASE + "/" + b["slug"] + "/#book"}}]
         first = re.sub("<[^>]+>", "", re.search(r"<p>(.*?)</p>", h, re.S).group(1))
         desc = f"{label(n)} of “{b['title']}” by Nona Dmitrievna Dronova. " + (first[:150].rsplit(" ", 1)[0] + "…")
-        page(f'{b["slug"]}/{s_}.html', f"{t} — {label(n)}" if n else f"{t} — {b['title']}", desc, body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="article",
-             crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s_}.html')], graph=g)
+        page(f'{b["slug"]}/{s_}.html', f"{t} — {label(n)}" if n else f"{t} — {b['title'].replace('What You Need to Know About ', '')}", desc, body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="article",
+             crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s_}.html')], graph=g,
+             extra_head=citation_meta(b, chapter=t, url=url))
 
 def build_author():
     bio = md_to_html(os.path.join(ROOT, "tools", "content", "author.md"))
@@ -616,7 +700,7 @@ def build_author():
  </ul>
 </div></section>'''
     p = dict(PERSON); p["image"] = BASE + "/images/nona-dronova.jpg"
-    page("author.html", "About the Author — Professor Nona Dmitrievna Dronova",
+    page("author.html", "Professor Nona Dmitrievna Dronova — About the Author",
          "Professor Nona Dmitrievna Dronova: Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist. Her methods for the non-destructive authentication of Chinese porcelain, jade and bronze: BEINOS, DEE, LIE, PLIC, STA and TETA.",
          body, cur="author.html", og_image="/images/nona-dronova.jpg", og_type="profile", crumbs=[("About the Author", "author.html")],
          graph=[{"@type": "ProfilePage", "url": BASE + "/author.html", "mainEntity": {"@id": PERSON_ID}}, p])
@@ -679,7 +763,7 @@ def build_literature():
  <p style="display:flex;flex-wrap:wrap;gap:6px">{jump(jad)}</p>
  {jad_html}
 </div></section>'''
-    page("literature.html", "Scientific Literature — Articles by Nona Dmitrievna Dronova", f"{total} open-access scientific articles by Professor Nona Dmitrievna Dronova on the authentication of ancient Chinese porcelain, jade and bronze, with DOI.",
+    page("literature.html", "Scientific Articles by Nona Dmitrievna Dronova", f"{total} open-access scientific articles by Professor Nona Dmitrievna Dronova on the authentication of ancient Chinese porcelain, jade and bronze, with DOI.",
          body, crumbs=[("Scientific Literature", "literature.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature", "author": {"@id": PERSON_ID},
                  "mainEntity": {"@type": "ItemList", "numberOfItems": total,
@@ -715,7 +799,7 @@ def build_publications():
 
 def build_404():
     body = head_band("Page not found", 'The page you are looking for does not exist. <a href="/index.html">Return to the home page</a>.')
-    page("404.html", "Page not found", "Page not found.", body)
+    page("404.html", "Page not found", "The page you are looking for does not exist. Return to the Chinese Antiques scientific library home page.", body, robots="noindex, follow")
     PAGES.remove("404.html")
 
 def build_seo():
@@ -728,6 +812,7 @@ def build_seo():
     open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tools/\n\nSitemap: {BASE}/sitemap.xml\n")
 
 if __name__ == "__main__":
+    prepare_images()
     build_home(); build_porcelain(); build_jade_bronze(); build_atlas(); build_library()
     [ (build_book(b), build_chapters(b)) for b in BOOKS ]; build_author(); build_about()
     build_literature(); build_publications(); build_404(); build_seo()
