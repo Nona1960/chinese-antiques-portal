@@ -46,7 +46,7 @@ PORCELAIN = {
     "title": "What You Need to Know About Antique Chinese Porcelain",
     "orig": "Что надо знать о старинном китайском фарфоре",
     "kind": "Reference encyclopaedia",
-    "year": "2016", "place": "Moscow", "isbn": "978-5-9908782-6-6",
+    "year": "2016", "place": "Moscow", "isbn": "978-5-9908782-6-6", "doi": "10.5281/zenodo.16794377",
     "cover": "/images/porcelain-book-cover.jpg",
     "abstract": ("A reference encyclopaedia that provides the information needed to attribute antique Chinese "
                  "porcelain in accordance with international standards. Separate chapters are devoted to the "
@@ -73,7 +73,7 @@ JADE = {
     "subtitle": "A Handbook in Questions and Answers",
     "orig": "Что надо знать о старинном китайском нефрите",
     "kind": "Handbook in questions and answers",
-    "year": "2017", "place": "Moscow", "isbn": None, "cover": None,
+    "year": "2017", "place": "Moscow", "isbn": None, "cover": None, "doi": "10.5281/zenodo.16794851",
     "abstract": ("A handbook in the form of questions and answers on the natural ageing of jade in burials and the "
                  "diagnostic signs of its antiquity. Particular attention is given to the causes of the characteristic "
                  "ring-shaped iron-rich formations crystallised on the surface of carved artefacts and to the zoning of "
@@ -475,11 +475,14 @@ def book_graph(b):
          "description": b["abstract"], "genre": b["kind"],
          "workTranslation": {"@type": "Book", "name": b["title"], "inLanguage": "en", "url": url, "hasPart": parts}}
     if b["isbn"]: g["isbn"] = b["isbn"]
+    g["sameAs"] = "https://doi.org/" + b["doi"]
+    g["identifier"] = {"@type": "PropertyValue", "propertyID": "DOI", "value": b["doi"]}
     if b["cover"]: g["image"] = BASE + b["cover"]
     return g
 
 def build_book(b):
     isbn = f'<dt>ISBN</dt><dd>{b["isbn"]}</dd>' if b["isbn"] else ""
+    isbn += f'<dt>Zenodo</dt><dd><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">doi:{b["doi"]}</a> (PDF, open access)</dd>'
     body = head_band(esc(b["title"]), f'{esc(b["subtitle"])}<br><em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
 <section class="section">
  <div class="wrap split cover-split">
@@ -598,29 +601,44 @@ def build_about():
          body, crumbs=[("About the Project", "about.html")], graph=[{"@type": "AboutPage", "url": BASE + "/about.html", "name": "About the Project"}])
 
 def build_literature():
-    data = json.load(open(os.path.join(ROOT, "tools", "content", "zenodo_publications.json"), encoding="utf-8"))
-    total = sum(len(g["items"]) for g in data)
+    por = json.load(open(os.path.join(ROOT, "tools", "content", "zenodo_publications.json"), encoding="utf-8"))
+    jad = json.load(open(os.path.join(ROOT, "tools", "content", "zenodo_jade_bronze.json"), encoding="utf-8"))
+    jad = [{"id": "jade-" + re.sub(r"[^a-z]+", "-", g["title"].lower()).strip("-"), "title": g["title"].replace(" Reference Objects", ""),
+            "span": "", "items": [i for i in g["items"] if "Reference Book" not in i["title"]]} for g in jad]
+    jad = [g for g in jad if g["items"]]
     short = lambda t: t.replace("Qing Dynasty — ", "").replace(" Period", "").replace(" Dynasty", "")
-    jump = " ".join(f'<a class="tag" href="#{g["id"]}">{esc(short(g["title"]))}</a>' for g in data)
-    blocks, arts = [], []
-    for g in data:
-        lis = []
-        for it in sorted(g["items"], key=lambda x: (x["year"], x["title"])):
-            doi = it["url"].split("doi.org/")[-1].lower()
-            repo = "Zenodo" if "zenodo" in doi else "Figshare"
-            lis.append(f'<li><div class="pt"><a href="{esc(it["url"])}" target="_blank" rel="noopener">{esc(it["title"])}</a></div>'
-                       f'<div class="pm">Dronova, N. · {esc(it["year"])} · {repo} · doi:{esc(doi)}</div></li>')
-            arts.append({"@type": "ScholarlyArticle", "name": it["title"], "datePublished": it["year"], "url": it["url"],
-                         "author": {"@id": PERSON_ID}})
-        blocks.append(f'<h2 id="{g["id"]}">{esc(g["title"])} <small style="font-family:var(--sans);font-size:.85rem;color:var(--muted)">{esc(g["span"])} · {len(g["items"])}</small></h2><ul class="pubs">{"".join(lis)}</ul>')
-    body = head_band("Scientific Literature", f"The scientific articles of Professor Nona Dronova on the authentication of ancient Chinese porcelain: {total} open-access publications with DOI, grouped by dynasty and period.",
+    arts = []
+    def render(groups):
+        out = []
+        for g in groups:
+            lis = []
+            for it in sorted(g["items"], key=lambda x: (x["year"], x["title"])):
+                doi = it["url"].split("doi.org/")[-1].lower()
+                repo = "Zenodo" if "zenodo" in doi else "Figshare"
+                obj = (" · Atlas object " + ", ".join(it["objects"])) if it.get("objects") else ""
+                lis.append(f'<li><div class="pt"><a href="{esc(it["url"])}" target="_blank" rel="noopener">{esc(it["title"])}</a></div>'
+                           f'<div class="pm">Dronova, N. · {esc(it["year"])} · {repo} · doi:{esc(doi)}{esc(obj)}</div></li>')
+                arts.append({"@type": "ScholarlyArticle", "name": it["title"], "datePublished": it["year"], "url": it["url"], "author": {"@id": PERSON_ID}})
+            span = f'{esc(g["span"])} · ' if g["span"] else ""
+            out.append(f'<h3 id="{g["id"]}">{esc(g["title"])} <small style="font-family:var(--sans);font-size:.85rem;color:var(--muted)">{span}{len(g["items"])}</small></h3><ul class="pubs">{"".join(lis)}</ul>')
+        return "".join(out)
+    np_, nj = sum(len(g["items"]) for g in por), sum(len(g["items"]) for g in jad)
+    jump = lambda groups: " ".join(f'<a class="tag" href="#{g["id"]}">{esc(short(g["title"]))}</a>' for g in groups)
+    por_html, jad_html = render(por), render(jad)
+    total = np_ + nj
+    body = head_band("Scientific Literature", f"The scientific articles of Professor Nona Dronova: {total} open-access publications with DOI on the authentication of ancient Chinese porcelain, jade and bronze.",
                      crumbs=[("Scientific Literature", "literature.html")], eyebrow="Author’s scientific articles") + f'''
 <section class="section"><div class="wrap prose" style="max-width:900px">
- <p>All articles are published in open access (CC BY 4.0), most of them in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em>, each with a permanent DOI. The list follows the publication index of the <a href="{ATLAS}publications.html" target="_blank" rel="noopener">Diagnostic Atlas</a>.</p>
- <p style="display:flex;flex-wrap:wrap;gap:6px">{jump}</p>
- {"".join(blocks)}
+ <p>All articles are published in open access (CC BY 4.0), most of them in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em>, each with a permanent DOI. The lists follow the publication indexes of the <a href="{ATLAS}publications.html" target="_blank" rel="noopener">Diagnostic Atlas of Chinese Porcelain</a> and the <a href="{ATLAS_JB}publications.html" target="_blank" rel="noopener">Atlas of Ancient Jade and Bronze</a>.</p>
+ <p style="display:flex;flex-wrap:wrap;gap:6px"><a class="tag" href="#porcelain">Porcelain · {np_}</a> <a class="tag" href="#jade">Jade &amp; bronze · {nj}</a></p>
+ <h2 id="porcelain">Porcelain</h2>
+ <p style="display:flex;flex-wrap:wrap;gap:6px">{jump(por)}</p>
+ {por_html}
+ <h2 id="jade">Jade and bronze</h2>
+ <p style="display:flex;flex-wrap:wrap;gap:6px">{jump(jad)}</p>
+ {jad_html}
 </div></section>'''
-    page("literature.html", "Scientific Literature — Articles by Nona Dronova", f"{total} open-access scientific articles by Professor Nona Dronova on the authentication of ancient Chinese porcelain, Tang to Qing dynasties, with DOI.",
+    page("literature.html", "Scientific Literature — Articles by Nona Dronova", f"{total} open-access scientific articles by Professor Nona Dronova on the authentication of ancient Chinese porcelain, jade and bronze, with DOI.",
          body, crumbs=[("Scientific Literature", "literature.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature", "author": {"@id": PERSON_ID},
                  "mainEntity": {"@type": "ItemList", "numberOfItems": total,
@@ -638,12 +656,13 @@ def build_publications():
     body = head_band("Zenodo Publications", "Open-access scientific papers by Professor Nona Dronova, each archived on Zenodo with a permanent DOI.",
                      crumbs=[("Zenodo Publications", "publications.html")], eyebrow="Open access") + f'''
 <section class="section"><div class="wrap prose">
- <p>More than 240 records are published in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em> (CC BY 4.0). The complete index, grouped by dynasty and linked to the reference objects, is maintained in the Atlas.</p>
+ <p>Several hundred records are published in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em> (CC BY 4.0). The complete index, grouped by dynasty and linked to the reference objects, is maintained in the Atlas.</p>
  <p><a class="btn btn-gold" href="{ATLAS}publications.html" target="_blank" rel="noopener">Full index of publications ↗</a> <a class="btn" href="{ORCID}" target="_blank" rel="noopener">ORCID profile ↗</a></p>
  <h2>Selected methodological papers</h2>
  <ul class="pubs">{li}</ul>
  <h2>Monographs on Zenodo</h2>
- <p>Zenodo records of the two monographs, with their DOIs, will be listed here.</p>
+ <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">{esc(b["title"])}: {esc(b["subtitle"])}</a></div><div class="pm">Nona Dronova · original edition {b["place"]}, {b["year"]} · doi:{b["doi"]} · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
+ <p><a href="https://zenodo.org/search?q=metadata.creators.person_or_org.name:%22NONA,+Dronova%22" target="_blank" rel="noopener">All records by Nona Dronova on Zenodo ↗</a> · <a href="/literature.html">Complete list of articles on this site</a></p>
 </div></section>'''
     page("publications.html", "Zenodo Publications — Open-Access Research with DOI", "Open-access scientific publications by Professor Nona Dronova on the authentication of Chinese porcelain, archived on Zenodo with DOI.",
          body, crumbs=[("Zenodo Publications", "publications.html")],
