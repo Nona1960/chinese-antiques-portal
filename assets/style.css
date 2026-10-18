@@ -210,3 +210,4 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 .prose td:not(:first-child){min-width:90px}
 .prose h2 small{font-weight:400}
 .reader > *{min-width:0}
+.pdf-note{font-size:.84rem;margin-top:10px;color:var(--ink-2)}

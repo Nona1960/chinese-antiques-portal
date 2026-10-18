@@ -91,7 +91,19 @@ JADE = {
 }
 PORCELAIN["content"] = "porcelain"
 PORCELAIN["subtitle"] = "A Reference Encyclopaedia"
+PORCELAIN["pdf"] = {"title": "The Contemporary Relevance of N. D. Dronova’s Monograph What Should One Know About Antique Chinese Porcelain?: An Integrated Approach to Attribution, Authentication, and Microscopic Diagnostics",
+                    "date": "17 October 2026", "year": "2026", "doi": "10.5281/zenodo.23439580"}
+JADE["pdf"] = {"title": "Natural Aging, Surface Corrosion, and Scientific Authentication of Ancient Chinese Nephrite: The Contemporary Relevance of N. D. Dronova’s 2017 Monograph",
+               "date": "18 October 2026", "year": "2026", "doi": "10.5281/zenodo.23446188"}
 BOOKS = [PORCELAIN, JADE]
+
+def pdf_note(b, short=False):
+    a = b["pdf"]
+    link = f'<a href="https://doi.org/{a["doi"]}" target="_blank" rel="noopener">doi:{a["doi"]}</a>'
+    if short:
+        return f'<p class="pdf-note"><strong>Original Russian edition (PDF):</strong> attached to the Zenodo article {link}</p>'
+    return (f'<div class="note"><strong>Original printed edition — PDF.</strong> The complete original Russian edition of the book is attached as a PDF to the open-access Zenodo article '
+            f'<a href="https://doi.org/{a["doi"]}" target="_blank" rel="noopener"><em>{esc(a["title"])}</em></a> (Zenodo, {a["date"]}, {link}).</div>')
 
 def esc(s):
     return html.escape(s, quote=True)
@@ -235,7 +247,7 @@ def book_card(b, link=True):
     tag = f'<span class="tag">English edition · {ch} of {len(b["chapters"])} parts online</span>'
     more = f'<p style="margin-top:14px"><a class="btn" href="/{b["slug"]}/">Open the book</a></p>' if link else ""
     return (f'<article class="book">{cover_html(b)}<div><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
-            f'<div class="meta">{esc(book_meta(b))}</div><p>{esc(b["abstract"])}</p>{tag}{more}</div></article>')
+            f'<div class="meta">{esc(book_meta(b))}</div><p>{esc(b["abstract"])}</p>{pdf_note(b, True)}{tag}{more}</div></article>')
 
 # ------------------------------------------------------------------ pages
 def build_home():
@@ -278,7 +290,8 @@ def build_home():
 <section class="section alt">
  <div class="wrap">
   <div class="section-head"><span class="eyebrow">Scientific publications of the author</span><h2>Monographs</h2>
-  <p>The foundation of the library: two reference monographs by Professor Nona Dronova, published in Russian and presented here in English translation.</p></div>
+  <p>The foundation of the library: two reference monographs by Professor Nona Dronova, published in Russian and presented here in English translation.</p>
+  <p>The original printed editions are available in full as PDF files, attached to two open-access articles on Zenodo that examine the contemporary relevance of each monograph: <a href="https://doi.org/{PORCELAIN["pdf"]["doi"]}" target="_blank" rel="noopener">porcelain (doi:{PORCELAIN["pdf"]["doi"]})</a> and <a href="https://doi.org/{JADE["pdf"]["doi"]}" target="_blank" rel="noopener">jade (doi:{JADE["pdf"]["doi"]})</a>.</p></div>
   <div class="books">{book_card(PORCELAIN)}{book_card(JADE)}</div>
  </div>
 </section>
@@ -475,14 +488,16 @@ def book_graph(b):
          "description": b["abstract"], "genre": b["kind"],
          "workTranslation": {"@type": "Book", "name": b["title"], "inLanguage": "en", "url": url, "hasPart": parts}}
     if b["isbn"]: g["isbn"] = b["isbn"]
-    g["sameAs"] = "https://doi.org/" + b["doi"]
+    g["sameAs"] = ["https://doi.org/" + b["pdf"]["doi"], "https://doi.org/" + b["doi"]]
+    g["subjectOf"] = {"@type": "ScholarlyArticle", "name": b["pdf"]["title"], "datePublished": b["pdf"]["year"], "url": "https://doi.org/" + b["pdf"]["doi"], "author": {"@id": PERSON_ID}}
     g["identifier"] = {"@type": "PropertyValue", "propertyID": "DOI", "value": b["doi"]}
     if b["cover"]: g["image"] = BASE + b["cover"]
     return g
 
 def build_book(b):
     isbn = f'<dt>ISBN</dt><dd>{b["isbn"]}</dd>' if b["isbn"] else ""
-    isbn += f'<dt>Zenodo</dt><dd><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">doi:{b["doi"]}</a> (PDF, open access)</dd>'
+    isbn += f'<dt>Original edition (PDF)</dt><dd><a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">doi:{b["pdf"]["doi"]}</a> — Zenodo, {b["pdf"]["date"]}</dd>'
+    isbn += f'<dt>Earlier Zenodo record</dt><dd><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">doi:{b["doi"]}</a></dd>'
     body = head_band(esc(b["title"]), f'{esc(b["subtitle"])}<br><em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
 <section class="section">
  <div class="wrap split cover-split">
@@ -490,6 +505,7 @@ def build_book(b):
   <div class="prose">
    <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{esc(b["kind"])}</dd><dt>Published</dt><dd>{b["place"]}, {b["year"]}</dd>{isbn}<dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>Published chapter by chapter on this site</dd></dl>
    <h2>Abstract</h2><p>{esc(b["abstract"])}</p>
+   {pdf_note(b)}
   </div>
  </div>
 </section>
@@ -527,7 +543,7 @@ def build_chapters(b):
   <h1>{esc(t)}</h1>
   <p style="font-family:var(--serif);font-style:italic;color:var(--muted);margin-top:-.6em">{esc(o)}</p>
   {h}
-  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Nona Dronova, <em>{esc(b["title"])}</em> (<em>{esc(b["orig"])}</em>). {b["place"]}, {b["year"]}.{isbn} English translation.</p>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Nona Dronova, <em>{esc(b["title"])}</em> (<em>{esc(b["orig"])}</em>). {b["place"]}, {b["year"]}.{isbn} English translation. The original Russian edition is available as a PDF via <a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">doi:{b["pdf"]["doi"]}</a>.</p>
   {nav}
  </article>
 </div>'''
@@ -661,6 +677,9 @@ def build_publications():
  <h2>Selected methodological papers</h2>
  <ul class="pubs">{li}</ul>
  <h2>Monographs on Zenodo</h2>
+ <p>The complete original Russian editions of both monographs are attached as PDF files to these open-access articles:</p>
+ <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["pdf"]["doi"]}" target="_blank" rel="noopener">{esc(b["pdf"]["title"])}</a></div><div class="pm">Nona Dronova · Zenodo, {b["pdf"]["date"]} · doi:{b["pdf"]["doi"]} · includes the PDF of the {b["year"]} edition · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
+ <p>Earlier Zenodo records of the monographs:</p>
  <ul class="pubs">{"".join(f'<li><div class="pt"><a href="https://doi.org/{b["doi"]}" target="_blank" rel="noopener">{esc(b["title"])}: {esc(b["subtitle"])}</a></div><div class="pm">Nona Dronova · original edition {b["place"]}, {b["year"]} · doi:{b["doi"]} · <a href="/{b["slug"]}/">English edition on this site</a></div></li>' for b in BOOKS)}</ul>
  <p><a href="https://zenodo.org/search?q=metadata.creators.person_or_org.name:%22NONA,+Dronova%22" target="_blank" rel="noopener">All records by Nona Dronova on Zenodo ↗</a> · <a href="/literature.html">Complete list of articles on this site</a></p>
 </div></section>'''

@@ -1,5 +1,18 @@
 [
  {
+  "id": "monograph",
+  "title": "Monograph — Contemporary Relevance",
+  "span": "",
+  "items": [
+   {
+    "title": "The Contemporary Relevance of N. D. Dronova’s Monograph What Should One Know About Antique Chinese Porcelain?: An Integrated Approach to Attribution, Authentication, and Microscopic Diagnostics (with the PDF of the 2016 edition)",
+    "year": "2026",
+    "url": "https://doi.org/10.5281/ZENODO.23439580",
+    "doi": ""
+   }
+  ]
+ },
+ {
   "id": "tang",
   "title": "Tang Dynasty",
   "span": "618–907",
