@@ -339,7 +339,8 @@ def head_band(title, lead=None, crumbs=None, eyebrow=None):
 
 def book_card(b, link=True):
     ch = sum(1 for c in b["chapters"] if available(b, c[0]))
-    tag = f'<span class="tag">English · {ch} of {len(b["chapters"])} parts online</span>'
+    full = ch == len(b["chapters"])
+    tag = f'<span class="tag">Complete English translation · {ch} parts</span>' if full else f'<span class="tag">English · {ch} of {len(b["chapters"])} parts online</span>'
     more = f'<p style="margin-top:14px"><a class="btn" href="/{b["slug"]}/">Open the book</a></p>' if link else ""
     return (f'<article class="book">{cover_html(b)}<div class="book-body"><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div><div class="byline">Author: Nona Dmitrievna Dronova</div>'
             f'{biblio_html(b)}<p>{esc(b["abstract"])}</p>{pdf_note(b, True)}<div class="book-actions">{tag}{more}</div></div></article>')
