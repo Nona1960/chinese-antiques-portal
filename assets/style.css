@@ -94,6 +94,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
 .cover-placeholder .t{font-size:1.18rem;line-height:1.2}
 .cover-placeholder .s{font-family:var(--sans);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
 .book h3{font-size:1.5rem}
+.cover-lg{max-width:300px;width:100%;border:1px solid var(--border)}
 .book .orig{font-family:var(--serif);font-style:italic;color:var(--muted);margin-top:4px}
 .book .meta{font-size:.82rem;color:var(--muted);margin:10px 0}
 .book p{font-size:.93rem;color:var(--ink-2)}

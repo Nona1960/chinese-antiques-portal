@@ -68,19 +68,63 @@ PORCELAIN = {
 }
 JADE = {
     "slug": "monographs/antique-chinese-jade",
+    "content": "jade",
     "title": "What You Need to Know About Antique Chinese Jade",
+    "subtitle": "A Handbook in Questions and Answers",
     "orig": "Что надо знать о старинном китайском нефрите",
-    "kind": "Reference monograph",
+    "kind": "Handbook in questions and answers",
+    "year": "2017", "place": "Moscow", "isbn": None, "cover": None,
+    "abstract": ("A handbook in the form of questions and answers on the natural ageing of jade in burials and the "
+                 "diagnostic signs of its antiquity. Particular attention is given to the causes of the characteristic "
+                 "ring-shaped iron-rich formations crystallised on the surface of carved artefacts and to the zoning of "
+                 "external corrosion on ancient Chinese jades. A separate chapter examines the noble patinas of "
+                 "ancient bronzes."),
+    "chapters": [
+        (0, "Preface", "Введение", "preface"),
+        (1, "General Information on Nephrite and Jadeite", "Общие сведения о нефрите и жадеите", "chapter-01-nephrite-and-jadeite"),
+        (2, "How to Distinguish Nephrite and Jadeite from Imitations", "Как отличить нефрит и жадеит от подделок", "chapter-02-imitations"),
+        (3, "The History of Jade Working", "История обработки жадеита", "chapter-03-history-of-jade-working"),
+        (4, "Signs of Antiquity in Jade", "Признаки древности нефритов", "chapter-04-signs-of-antiquity"),
+        (5, "Appraisal of Nephrite and Nephrite Objects", "Оценка нефрита и изделий из него", "chapter-05-appraisal"),
+        (6, "Scientific Study of Ancient Chinese Bronzes", "Особенности научных исследований древних китайских бронз", "chapter-06-ancient-bronzes"),
+    ],
 }
+PORCELAIN["content"] = "porcelain"
+PORCELAIN["subtitle"] = "A Reference Encyclopaedia"
+BOOKS = [PORCELAIN, JADE]
 
 def esc(s):
     return html.escape(s, quote=True)
 
-def chapter_file(n):
-    return os.path.join(ROOT, "tools", "content", "porcelain", f"ch{n:02d}.md")
+def chapter_file(b, n):
+    return os.path.join(ROOT, "tools", "content", b["content"], f"ch{n:02d}.md")
 
-def available(n):
-    return os.path.exists(chapter_file(n))
+def available(b, n):
+    return os.path.exists(chapter_file(b, n))
+
+def label(n):
+    return "Preface" if n == 0 else f"Chapter {n}"
+
+def toc_html(b, prefix):
+    rows = []
+    for n, t, o, s_ in b["chapters"]:
+        ok = available(b, n)
+        title = f'<a href="{prefix}{s_}.html">{esc(t)}</a>' if ok else esc(t)
+        num = "—" if n == 0 else f"{n:02d}"
+        rows.append(f'<li><span class="n">{num}</span><span class="t">{title}<small>{esc(o)}</small></span>'
+                    f'<span class="s{" ok" if ok else ""}">{"Read" if ok else "In translation"}</span></li>')
+    return '<ol class="toc">' + "".join(rows) + '</ol>'
+
+def cover_html(b, cls="cover", width=None):
+    if b["cover"]:
+        return f'<img class="{cls}" src="{b["cover"]}" alt="Cover of the book «{esc(b["orig"])}» by Nona Dronova" loading="lazy">'
+    st = f' style="width:{width}px"' if width else ""
+    return (f'<div class="cover-placeholder"{st} role="img" aria-label="Title of the book"><span class="a">Nona Dronova</span>'
+            f'<span class="t">{esc(b["orig"])}</span><span class="s">{esc(b["place"])} · {b["year"]}</span></div>')
+
+def book_meta(b):
+    m = f'{b["kind"]} · {b["place"]}, {b["year"]}'
+    return m + (f' · ISBN {b["isbn"]}' if b["isbn"] else "")
 
 # ------------------------------------------------------------------ layout
 def header(cur):
@@ -187,22 +231,11 @@ def head_band(title, lead=None, crumbs=None, eyebrow=None):
     return f'<section class="page-head"><div class="wrap">{c}{e}<h1>{title}</h1>{l}</div></section>'
 
 def book_card(b, link=True):
-    ch = sum(1 for c in PORCELAIN["chapters"] if available(c[0])) if b is PORCELAIN else 0
-    if b is PORCELAIN:
-        cover = f'<img class="cover" src="{b["cover"]}" alt="Cover of the book «{b["orig"]}» by Nona Dronova" loading="lazy">'
-        meta = f'{b["kind"]} · {b["place"]}, {b["year"]} · ISBN {b["isbn"]}'
-        p = b["abstract"]
-        tag = f'<span class="tag">English edition · {ch} of {len(b["chapters"])} chapters online</span>'
-    else:
-        cover = ('<div class="cover-placeholder" role="img" aria-label="Book cover placeholder"><span class="a">Nona Dronova</span>'
-                 f'<span class="t">{esc(b["orig"])}</span><span class="s">Forthcoming</span></div>')
-        meta = f'{b["kind"]} · Russian original'
-        p = ("The second monograph of the library, devoted to the identification and authentication of antique "
-             "Chinese jade (nephrite). The English edition is being prepared chapter by chapter.")
-        tag = '<span class="tag">English edition in preparation</span>'
+    ch = sum(1 for c in b["chapters"] if available(b, c[0]))
+    tag = f'<span class="tag">English edition · {ch} of {len(b["chapters"])} parts online</span>'
     more = f'<p style="margin-top:14px"><a class="btn" href="/{b["slug"]}/">Open the book</a></p>' if link else ""
-    return (f'<article class="book">{cover}<div><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
-            f'<div class="meta">{esc(meta)}</div><p>{esc(p)}</p>{tag}{more}</div></article>')
+    return (f'<article class="book">{cover_html(b)}<div><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
+            f'<div class="meta">{esc(book_meta(b))}</div><p>{esc(b["abstract"])}</p>{tag}{more}</div></article>')
 
 # ------------------------------------------------------------------ pages
 def build_home():
@@ -275,9 +308,7 @@ def build_home():
          body, cur="index.html", graph=graph)
 
 def build_porcelain():
-    toc = "".join(
-        f'<li><span class="n">{n:02d}</span><span class="t">{"<a href=\"/" + PORCELAIN["slug"] + "/" + s + ".html\">" + esc(t) + "</a>" if available(n) else esc(t)}</span><span class="s{" ok" if available(n) else ""}">{"Read" if available(n) else "In translation"}</span></li>'
-        for n, t, o, s in PORCELAIN["chapters"])
+    toc = toc_html(PORCELAIN, "/" + PORCELAIN["slug"] + "/")
     body = head_band("Porcelain", "Antique Chinese porcelain: history, styles, symbols and marks; the appraisal of export, imperial and monochrome wares; and the criteria that separate genuine antique pieces from later copies and forgeries.",
                      crumbs=[("Porcelain", "porcelain.html")], eyebrow="Field of study") + f'''
 <section class="section">
@@ -293,7 +324,7 @@ def build_porcelain():
 <section class="section alt">
  <div class="wrap">
   <div class="section-head"><span class="eyebrow">Monograph</span><h2>{esc(PORCELAIN["title"])}</h2><p>{esc(PORCELAIN["abstract"])}</p></div>
-  <ol class="toc">{toc}</ol>
+  {toc}
   <p style="margin-top:26px"><a class="btn btn-gold" href="/{PORCELAIN["slug"]}/">About the book</a></p>
  </div>
 </section>
@@ -320,8 +351,8 @@ def build_jade_bronze():
    <span class="eyebrow">Jade</span><h2 style="margin-top:0">Antique Chinese jade</h2>
    <p>Jade occupies a unique place in Chinese culture, from the ritual objects of the Neolithic to the carvings of the Qing court. For the expert, every jade carries two records: the stone itself — nephrite, its structure and colour — and the history of its working, preserved in tool marks, polish and drilling.</p>
    <p>Authentication rests on the study of the surface: the alteration zones, burial patina and natural transformation that form over centuries and that are extremely difficult to reproduce artificially.</p>
-   <p>The monograph <em>{esc(JADE["title"])}</em> is being prepared for this library.</p>
-   <p><a class="btn" href="/{JADE["slug"]}/">About the jade monograph</a></p>
+   <p>The monograph <em>{esc(JADE["title"])}</em> ({JADE["place"]}, {JADE["year"]}), a handbook in questions and answers, is published in this library in English translation.</p>
+   <p><a class="btn" href="/{JADE["slug"]}/">Open the jade monograph</a></p>
   </div>
  </div>
 </section>
@@ -434,98 +465,78 @@ def build_library():
          "Monographs, scientific articles and reference materials by Professor Nona Dronova on the attribution and authentication of Chinese porcelain, jade and bronze.",
          body, cur="library.html", og_image="/images/porcelain-book-cover.jpg", crumbs=[("Library", "library.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/library.html", "name": "Library", "author": {"@id": PERSON_ID},
-                 "hasPart": [{"@id": BASE + "/" + PORCELAIN["slug"] + "/#book"}]}])
+                 "hasPart": [{"@id": BASE + "/" + b["slug"] + "/#book"} for b in BOOKS]}])
 
-def book_graph():
-    url = BASE + "/" + PORCELAIN["slug"] + "/"
-    parts = [{"@type": "Chapter", "position": n, "name": t, "url": url + s + ".html"} for n, t, o, s in PORCELAIN["chapters"] if available(n)]
-    return {"@type": "Book", "@id": url + "#book", "name": PORCELAIN["orig"], "alternateName": PORCELAIN["title"],
-            "author": {"@id": PERSON_ID}, "isbn": PORCELAIN["isbn"], "datePublished": PORCELAIN["year"], "inLanguage": "ru",
-            "bookFormat": "https://schema.org/Hardcover", "image": BASE + PORCELAIN["cover"], "url": url,
-            "description": PORCELAIN["abstract"], "genre": "Reference encyclopaedia",
-            "about": ["Chinese porcelain", "Attribution", "Authentication of antiques"],
-            "workTranslation": {"@type": "Book", "name": PORCELAIN["title"], "inLanguage": "en", "url": url, "translator": {"@id": PERSON_ID}, "hasPart": parts}}
+def book_graph(b):
+    url = BASE + "/" + b["slug"] + "/"
+    parts = [{"@type": "Chapter", "position": n, "name": t, "url": url + s_ + ".html"} for n, t, o, s_ in b["chapters"] if available(b, n)]
+    g = {"@type": "Book", "@id": url + "#book", "name": b["orig"], "alternateName": b["title"],
+         "author": {"@id": PERSON_ID}, "datePublished": b["year"], "inLanguage": "ru", "url": url,
+         "description": b["abstract"], "genre": b["kind"],
+         "workTranslation": {"@type": "Book", "name": b["title"], "inLanguage": "en", "url": url, "hasPart": parts}}
+    if b["isbn"]: g["isbn"] = b["isbn"]
+    if b["cover"]: g["image"] = BASE + b["cover"]
+    return g
 
-def build_porcelain_book():
-    b = PORCELAIN
-    toc = "".join(
-        f'<li><span class="n">{n:02d}</span><span class="t">{"<a href=\"" + s + ".html\">" + esc(t) + "</a>" if available(n) else esc(t)}<small>{esc(o)}</small></span><span class="s{" ok" if available(n) else ""}">{"Read" if available(n) else "In translation"}</span></li>'
-        for n, t, o, s in b["chapters"])
-    body = head_band(esc(b["title"]), f'<em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
+def build_book(b):
+    isbn = f'<dt>ISBN</dt><dd>{b["isbn"]}</dd>' if b["isbn"] else ""
+    body = head_band(esc(b["title"]), f'{esc(b["subtitle"])}<br><em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
 <section class="section">
  <div class="wrap split cover-split">
-  <img src="{b["cover"]}" alt="Cover of «{esc(b["orig"])}» by Nona Dronova" style="max-width:300px">
+  {cover_html(b, "cover-lg", 300)}
   <div class="prose">
-   <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{b["kind"]}</dd><dt>Published</dt><dd>{b["place"]}, {b["year"]}</dd><dt>ISBN</dt><dd>{b["isbn"]}</dd><dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>Translated chapter by chapter on this site</dd></dl>
+   <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{esc(b["kind"])}</dd><dt>Published</dt><dd>{b["place"]}, {b["year"]}</dd>{isbn}<dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>Published chapter by chapter on this site</dd></dl>
    <h2>Abstract</h2><p>{esc(b["abstract"])}</p>
   </div>
  </div>
 </section>
 <section class="section alt">
- <div class="wrap"><div class="section-head"><h2>Contents</h2></div><ol class="toc">{toc}</ol></div>
+ <div class="wrap"><div class="section-head"><h2>Contents</h2></div>{toc_html(b, "")}</div>
 </section>'''
-    page(b["slug"] + "/index.html", b["title"], "Reference encyclopaedia by Nona Dronova on the attribution of antique Chinese porcelain: export, imperial and monochrome wares, styles, marks, symbols and the detection of forgeries. English edition.",
-         body, cur="library.html", og_image=b["cover"], og_type="book", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
-         graph=[book_graph()])
+    page(b["slug"] + "/index.html", f'{b["title"]}: {b["subtitle"]}', f'{b["title"]} by Nona Dronova ({b["place"]}, {b["year"]}). ' + b["abstract"][:110].rsplit(" ", 1)[0] + "… English edition.",
+         body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="book", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
+         graph=[book_graph(b)])
 
 def md_to_html(path):
     return subprocess.run(["pandoc", path, "-f", "markdown", "-t", "html5", "--wrap=none"],
                           capture_output=True, text=True, check=True).stdout
 
-def build_chapters():
-    b = PORCELAIN
+def build_chapters(b):
     chs = b["chapters"]
-    avail = [c for c in chs if available(c[0])]
-    for n, t, o, s in avail:
-        h = md_to_html(chapter_file(n))
+    avail = [c for c in chs if available(b, c[0])]
+    for n, t, o, s_ in avail:
+        h = md_to_html(chapter_file(b, n))
         h = re.sub(r"<h1[^>]*>.*?</h1>", "", h, count=1, flags=re.S)
         side = "".join(
-            f'<li class="{"cur" if c[0] == n else ("off" if not available(c[0]) else "")}">' +
-            (f'<a href="{c[3]}.html">{c[0]}. {esc(c[1])}</a>' if available(c[0]) else f'{c[0]}. {esc(c[1])}') + '</li>' for c in chs)
+            f'<li class="{"cur" if c[0] == n else ("off" if not available(b, c[0]) else "")}">' +
+            (f'<a href="{c[3]}.html">{"" if c[0] == 0 else str(c[0]) + ". "}{esc(c[1])}</a>' if available(b, c[0]) else f'{"" if c[0] == 0 else str(c[0]) + ". "}{esc(c[1])}') + '</li>' for c in chs)
         i = [c[0] for c in avail].index(n)
         prev = avail[i - 1] if i > 0 else None
         nxt = avail[i + 1] if i + 1 < len(avail) else None
         nav = '<div class="chapter-nav">' + (f'<a href="{prev[3]}.html">← {esc(prev[1])}</a>' if prev else '<a href="./">← Contents</a>') + \
               (f'<a href="{nxt[3]}.html">{esc(nxt[1])} →</a>' if nxt else '<a href="./">Contents →</a>') + '</div>'
+        isbn = f' ISBN {b["isbn"]}.' if b["isbn"] else ""
         body = f'''<div class="wrap reader">
  <aside><h4>{esc(b["title"])}</h4><ol>{side}</ol><p style="margin-top:16px"><a href="./">About the book</a></p></aside>
  <article class="prose">
-  <div class="crumbs"><a href="/index.html">Home</a> / <a href="/library.html">Library</a> / <a href="./">{esc(b["title"])}</a> / Chapter {n}</div>
-  <span class="eyebrow">Chapter {n}</span>
+  <div class="crumbs"><a href="/index.html">Home</a> / <a href="/library.html">Library</a> / <a href="./">{esc(b["title"])}</a> / {label(n)}</div>
+  <span class="eyebrow">{label(n)}</span>
   <h1>{esc(t)}</h1>
   <p style="font-family:var(--serif);font-style:italic;color:var(--muted);margin-top:-.6em">{esc(o)}</p>
   {h}
-  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Nona Dronova, <em>{esc(b["title"])}</em> (<em>{esc(b["orig"])}</em>). {b["place"]}, {b["year"]}. ISBN {b["isbn"]}. English translation.</p>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:32px">From: Nona Dronova, <em>{esc(b["title"])}</em> (<em>{esc(b["orig"])}</em>). {b["place"]}, {b["year"]}.{isbn} English translation.</p>
   {nav}
  </article>
 </div>'''
         words = len(re.sub("<[^>]+>", " ", h).split())
-        url = BASE + "/" + b["slug"] + "/" + s + ".html"
+        url = BASE + "/" + b["slug"] + "/" + s_ + ".html"
         g = [{"@type": "Chapter", "@id": url + "#chapter", "name": t, "alternateName": o, "position": n, "url": url,
               "inLanguage": "en", "wordCount": words, "author": {"@id": PERSON_ID},
               "isPartOf": {"@id": BASE + "/" + b["slug"] + "/#book"}}]
         first = re.sub("<[^>]+>", "", re.search(r"<p>(.*?)</p>", h, re.S).group(1))
-        desc = f"Chapter {n} of “{b['title']}” by Nona Dronova. " + (first[:150].rsplit(" ", 1)[0] + "…")
-        page(f'{b["slug"]}/{s}.html', f"{t} — Chapter {n}", desc, body, cur="library.html", og_image=b["cover"], og_type="article",
-             crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s}.html')], graph=g)
-
-def build_jade_book():
-    b = JADE
-    body = head_band(esc(b["title"]), f'<em>{esc(b["orig"])}</em>', crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")], eyebrow="Monograph") + f'''
-<section class="section">
- <div class="wrap split cover-split narrow">
-  <div class="cover-placeholder" style="width:240px" role="img" aria-label="Book cover placeholder"><span class="a">Nona Dronova</span><span class="t">{esc(b["orig"])}</span><span class="s">Forthcoming</span></div>
-  <div class="prose">
-   <dl class="facts"><dt>Author</dt><dd>Nona Dronova, Professor, Doctor of Technical Sciences</dd><dt>Type</dt><dd>{b["kind"]}</dd><dt>Original language</dt><dd>Russian</dd><dt>English edition</dt><dd>In preparation</dd></dl>
-   <p>The second monograph of the library is devoted to antique Chinese jade (nephrite): the stone and its imitations, the techniques of carving, and the surface evidence by which an ancient carving can be distinguished from a modern one.</p>
-   <p>The English edition will be published here chapter by chapter, as with the porcelain monograph.</p>
-   <p><a class="btn" href="/jade-bronze.html#jade">Jade in this library</a></p>
-  </div>
- </div>
-</section>'''
-    page(b["slug"] + "/index.html", b["title"], "Monograph by Nona Dronova on antique Chinese jade (nephrite): identification, carving techniques and authentication. English edition in preparation.",
-         body, cur="library.html", og_image="/images/jade-bat.jpg", crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/")],
-         graph=[{"@type": "Book", "name": b["orig"], "alternateName": b["title"], "author": {"@id": PERSON_ID}, "inLanguage": "ru", "url": BASE + "/" + b["slug"] + "/"}])
+        desc = f"{label(n)} of “{b['title']}” by Nona Dronova. " + (first[:150].rsplit(" ", 1)[0] + "…")
+        page(f'{b["slug"]}/{s_}.html', f"{t} — {label(n)}" if n else f"{t} — {b['title']}", desc, body, cur="library.html", og_image=b["cover"] or "/images/jade-bat.jpg", og_type="article",
+             crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s_}.html')], graph=g)
 
 def build_author():
     body = head_band("Professor Nona Dronova", "Doctor of Technical Sciences · Ph.D. in Geology and Mineralogy · Gemmologist", crumbs=[("About the Author", "author.html")], eyebrow="About the author") + f'''
@@ -548,7 +559,7 @@ def build_author():
    <h2>In this library</h2>
    <ul>
     <li><a href="/{PORCELAIN["slug"]}/">{esc(PORCELAIN["title"])}</a> ({PORCELAIN["year"]})</li>
-    <li><a href="/{JADE["slug"]}/">{esc(JADE["title"])}</a></li>
+    <li><a href="/{JADE["slug"]}/">{esc(JADE["title"])}</a> ({JADE["year"]})</li>
     <li><a href="/publications.html">Zenodo publications</a></li>
    </ul>
    <h2>Other projects</h2>
@@ -586,22 +597,51 @@ def build_about():
     page("about.html", "About the Project", "Purpose and structure of the Chinese Antiques scientific library: monographs, diagnostic atlas, literature and open-access publications on Chinese porcelain, jade and bronze.",
          body, crumbs=[("About the Project", "about.html")], graph=[{"@type": "AboutPage", "url": BASE + "/about.html", "name": "About the Project"}])
 
+JADE_LIT = [
+    ("Anderson, B. W.", "Gem Testing.", "Moscow: Mir, 1983. Russian edition."),
+    ("Burtseva, M. V., Ripp, G. S., Posokhov, V. F., Murzintseva, A. E.", "On the assessment of the sources of the fluids that formed the nephrites of Eastern Siberia.", "20th Symposium on Isotope Geochemistry, Vernadsky Institute of Geochemistry and Analytical Chemistry, Moscow, November 2013. In Russian."),
+    ("Vysotsky, S. V., Ignatiev, A. V., Levitsky, V. I., et al.", "New data on the stable isotopes of minerals of the corundum-bearing formations of Northern Karelia (Russia).", "Doklady Akademii Nauk, vol. 439, no. 1, pp. 95–98. In Russian."),
+    ("Paffengolts, K. N., et al. (eds.)", "Geological Dictionary. 2 vols.", "Moscow: Nedra, 1978. In Russian."),
+    ("Kievlenko, E. Ya. (ed.)", "Decorative Varieties of Coloured Stone of the USSR.", "Moscow: Nedra, 1989. In Russian."),
+    ("Dronova, N. D.", "Jewellery.", "Moscow: Yuvelir Publishing House, 1996. In Russian."),
+    ("Kievlenko, E. Ya., Senkevich, N. N., Gavrilov, A. P.", "Geology of Gemstone Deposits.", "Moscow: Nedra, 1974. In Russian."),
+    ("Komissarov, S. A.", "Ancient nephrites of Eastern Turkestan (Xinjiang): their distribution and use.", "In: Eurasia: Cultural Heritage of Ancient Civilisations, issue 2. Horizons of Eurasia, ed. O. A. Mitko. Novosibirsk, 1999, pp. 7–10. In Russian."),
+    ("Matlins, A. L., Bonanno, A. C.", "Jewelry & Gems: The Buying Guide.", "Moscow: Delo i Servis, 2001. Russian edition."),
+    ("Miller, A. M.", "Gems and Jewelry Appraising.", "Moscow: Kvinto-Konsalting, 2010. Russian edition."),
+    ("Portnov, A. M.", "The rumble of the Earth and the locomotive whistle.", "Priroda, 2015, no. 7, pp. 63–68. In Russian."),
+    ("Read, P. G.", "Gemmology.", "Moscow: Mir, 2003. Russian edition."),
+    ("Sinkankas, J.", "Gem Cutting: A Lapidary's Manual.", "Moscow: Mir, 1989. Russian edition."),
+    ("Suturin, A. N., Zamaletdinov, R. S.", "Nephrites.", "Novosibirsk: Nauka, 1984, pp. 104–118. In Russian."),
+    ("Fersman, A. E.", "Stories about Gems.", "Moscow: Nauka, 1974. In Russian."),
+    ("Schumann, W.", "The World of Stones: Precious and Ornamental Stones.", "Moscow: Mir, 1986. Russian edition."),
+    ("Hamada, K., Mizuno, S.", "Chifeng Hongshanhou.", "Archaeologia Orientalis, ser. A, no. 6. Far-Eastern Archaeology Society of Japan, 1938."),
+    ("Douglas, J. G.", "Review of Some Recent Research on Early Chinese Jades.", "Department of Conservation and Scientific Research, Freer Gallery of Art and Arthur M. Sackler Gallery, Washington, D.C., 2005."),
+    ("Cook, F. A.", "Raised relief on nephrite jade artifacts: observations, explanations and implications.", "Journal of Archaeological Science 40 (2013): 943–954."),
+    ("Wilkins, C. J., Tennant, W. C., Williamson, B. E., McCammon, C. A.", "", "American Mineralogist 88 (2003): 1336–1344."),
+    ("Aerts, A., Janssens, K., Adams, F.", "A chemical investigation of altered Chinese jade art objects.", "Orientations, November 1995, pp. 79–80."),
+    ("Tan, L. P., Chen, C. H., Tsien, H. H., Lo, H. J., Frey, R., Yu, B. S.", "Mineralogical criteria for archaic jades.", "In: Tsien, H. H. (ed.), Mineralogical Studies of Archaic Jades. Acta Geologica Taiwanica, Special Issue no. 32 (1996), pp. 169–192."),
+    ("Tsien, H. H., Fang, J. N.", "Mineralogy and alteration of Chinese jade artifacts.", "Western Pacific Earth Sciences 2 (2002): 239–250."),
+]
+
 def build_literature():
     cited = [
         ("Arapova, T. B.", "Chinese Porcelain in the Hermitage Collection (Late 14th – First Third of the 18th Century). Catalogue.", "Leningrad, 1977. In Russian."),
         ("Bogachikhin, M. M.", "Ceramics of China.", "Moscow, 1998. In Russian."),
         ("Kuzmenko, L. I.", "Chinese Porcelain of the 17th–18th Centuries.", "State Museum of Oriental Art, Moscow, 2009. In Russian."),
     ]
-    li = "".join(f'<li>{esc(a)} <em>{esc(t)}</em> {esc(p)}</li>' for a, t, p in cited)
+    fmt = lambda L: "".join(f'<li>{esc(a)} {"<em>" + esc(t) + "</em> " if t else ""}{esc(p)}</li>' for a, t, p in L)
     body = head_band("Scientific Literature", "Bibliography of works by other scholars on which the research in this library relies. The author's own works are listed in the Library.",
                      crumbs=[("Scientific Literature", "literature.html")], eyebrow="Bibliography") + f'''
 <section class="section"><div class="wrap prose">
- <h2 style="margin-top:0">Porcelain</h2>
+ <h2 style="margin-top:0" id="porcelain">Porcelain</h2>
  <p>Sources cited in <a href="/{PORCELAIN["slug"]}/"><em>{esc(PORCELAIN["title"])}</em></a>:</p>
- <ul class="biblio">{li}</ul>
- <div class="note">The bibliography is being expanded as further chapters of the monographs are translated. Sources for jade and bronze will be added with the jade monograph.</div>
+ <ul class="biblio">{fmt(cited)}</ul>
+ <h2 id="jade">Jade, gemmology and bronze</h2>
+ <p>Recommended literature from <a href="/{JADE["slug"]}/"><em>{esc(JADE["title"])}</em></a>:</p>
+ <ul class="biblio">{fmt(JADE_LIT)}</ul>
+ <div class="note">The bibliography is expanded as further chapters of the monographs are translated.</div>
 </div></section>'''
-    page("literature.html", "Scientific Literature — Bibliography", "Bibliography of scholarly sources on Chinese porcelain, jade and bronze used in the research of the Chinese Antiques scientific library.",
+    page("literature.html", "Scientific Literature — Bibliography", "Bibliography of scholarly sources on Chinese porcelain, jade, gemmology and bronze used in the research of the Chinese Antiques scientific library.",
          body, crumbs=[("Scientific Literature", "literature.html")], graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature"}])
 
 def build_publications():
@@ -644,6 +684,6 @@ def build_seo():
 
 if __name__ == "__main__":
     build_home(); build_porcelain(); build_jade_bronze(); build_atlas(); build_library()
-    build_porcelain_book(); build_chapters(); build_jade_book(); build_author(); build_about()
+    [ (build_book(b), build_chapters(b)) for b in BOOKS ]; build_author(); build_about()
     build_literature(); build_publications(); build_404(); build_seo()
     print("\n".join(PAGES))
