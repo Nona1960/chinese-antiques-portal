@@ -73,7 +73,7 @@ JADE = {
     "subtitle": "A Handbook in Questions and Answers",
     "orig": "Что надо знать о старинном китайском нефрите",
     "kind": "Handbook in questions and answers",
-    "year": "2017", "place": "Moscow", "isbn": None, "cover": None, "doi": "10.5281/zenodo.16794851",
+    "year": "2017", "place": "Moscow", "isbn": None, "cover": "/images/jade-book-cover.jpg", "doi": "10.5281/zenodo.16794851",
     "abstract": ("A handbook in the form of questions and answers on the natural ageing of jade in burials and the "
                  "diagnostic signs of its antiquity. Particular attention is given to the causes of the characteristic "
                  "ring-shaped iron-rich formations crystallised on the surface of carved artefacts and to the zoning of "
@@ -162,6 +162,7 @@ def footer():
    <img src="/images/sun-logo.jpg" alt="Sun emblem" width="64" height="64" loading="lazy">
    <div class="n">CHINESE ANTIQUES</div>
    <p>{TAGLINE}<br>Porcelain · Jade · Bronze</p>
+   <a class="btn btn-small btn-gold" href="/index.html" style="margin-top:14px">← Back to Home</a>
   </div>
   {cols}
  </div>
@@ -240,25 +241,25 @@ def head_band(title, lead=None, crumbs=None, eyebrow=None):
             f' / <a href="/{h}">{esc(n)}</a>' for n, h in crumbs[:-1]) + f' / <span>{esc(crumbs[-1][0])}</span></div>'
     e = f'<span class="eyebrow">{esc(eyebrow)}</span>' if eyebrow else ""
     l = f'<p class="lead">{lead}</p>' if lead else ""
-    return f'<section class="page-head"><div class="wrap">{c}{e}<h1>{title}</h1>{l}</div></section>'
+    return f'<section class="page-head"><div class="wrap">{c}{e}<h1>{title}</h1>{l}<p class="back"><a class="btn btn-small" href="/index.html">← Back to Home</a></p></div></section>'
 
 def book_card(b, link=True):
     ch = sum(1 for c in b["chapters"] if available(b, c[0]))
-    tag = f'<span class="tag">English edition · {ch} of {len(b["chapters"])} parts online</span>'
+    tag = f'<span class="tag">English · {ch} of {len(b["chapters"])} parts online</span>'
     more = f'<p style="margin-top:14px"><a class="btn" href="/{b["slug"]}/">Open the book</a></p>' if link else ""
-    return (f'<article class="book">{cover_html(b)}<div><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
-            f'<div class="meta">{esc(book_meta(b))}</div><p>{esc(b["abstract"])}</p>{pdf_note(b, True)}{tag}{more}</div></article>')
+    return (f'<article class="book">{cover_html(b)}<div class="book-body"><h3>{esc(b["title"])}</h3><div class="orig">{esc(b["orig"])}</div>'
+            f'<div class="meta">{esc(book_meta(b))}</div><p>{esc(b["abstract"])}</p>{pdf_note(b, True)}<div class="book-actions">{tag}{more}</div></div></article>')
 
 # ------------------------------------------------------------------ pages
 def build_home():
     photos = [
-        ("yellow-vase", "Yellow-glazed globular bottle vase with incised dragon and cloud decoration"),
-        ("celadon-vase", "Pale blue crackle-glazed baluster vase"),
-        ("jade-bat", "Carved dark jade figure of a bat with outspread wings"),
-        ("jade-bird-vessel", "Jade bird-form vessel with incised decoration"),
+        ("yellow-vase", "Yellow-glazed bottle vase · Chenghua mark and period"),
+        ("celadon-vase", "Ru ware · Northern Song dynasty"),
+        ("jade-bat", "Black jade bat · Neolithic period, shamanic cultures"),
+        ("jade-sun-god", "Sun God · Hongshan culture"),
     ]
     figs = "".join(
-        f'<figure><picture><source srcset="/images/{f}.webp" type="image/webp"><img src="/images/{f}.jpg" alt="{esc(a)}" width="480" height="640"{" style=\"object-position:72% center\"" if f == "jade-bird-vessel" else ""}{" loading=\"lazy\"" if i > 1 else ""}></picture><figcaption>{esc(a)}</figcaption></figure>'
+        f'<figure><picture><source srcset="/images/{f}.webp" type="image/webp"><img src="/images/{f}.jpg" alt="{esc(a)}" width="480" height="640"{" loading=\"lazy\"" if i > 1 else ""}></picture><figcaption>{esc(a)}</figcaption></figure>'
         for i, (f, a) in enumerate(photos))
     body = f'''
 <section class="hero">
@@ -280,9 +281,9 @@ def build_home():
   <div class="section-head"><span class="eyebrow">Fields of study</span><h2>Three materials, one method</h2>
   <p>The library brings together research on the three principal materials of Chinese antique art. Each is studied through the same principle: authenticity is established not by a single feature, but by a coherent system of material, technological and stylistic evidence.</p></div>
   <div class="cards">
-   <article class="card"><img src="/images/yellow-vase.jpg" alt="Yellow-glazed porcelain bottle vase" loading="lazy" style="object-position:center 40%"><div class="card-body"><h3>Porcelain</h3><p>History, styles, marks and symbols; export, imperial and monochrome wares; criteria for distinguishing genuine antique porcelain from later copies and forgeries.</p><a class="more" href="/porcelain.html">Explore porcelain →</a></div></article>
-   <article class="card"><img src="/images/jade-bat.jpg" alt="Carved dark jade bat" loading="lazy" style="object-position:center 30%"><div class="card-body"><h3>Jade</h3><p>Nephrite and its imitations, carving techniques and tool marks, surface alteration and patina as evidence of age.</p><a class="more" href="/jade-bronze.html#jade">Explore jade →</a></div></article>
-   <article class="card"><img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, Atlas reference object RO-BRONZE-036" loading="lazy" style="object-position:center 35%"><div class="card-body"><h3>Bronze</h3><p>Ritual bronze forms, casting technology, corrosion layers and patina, and the diagnostic value of trace elements.</p><a class="more" href="/jade-bronze.html#bronze">Explore bronze →</a></div></article>
+   <article class="card"><img src="/images/celadon-green-vase.jpg" alt="Green celadon-glazed vase with bird-shaped handles" loading="lazy"><div class="card-body"><h3>Porcelain</h3><p>History, styles, marks and symbols; export, imperial and monochrome wares; criteria for distinguishing genuine antique porcelain from later copies and forgeries.</p><a class="more" href="/porcelain.html">Explore porcelain →</a></div></article>
+   <article class="card"><img src="/images/jade-rhino.jpg" alt="White jade rhinoceros-form vessel with cover" loading="lazy"><div class="card-body"><h3>Jade</h3><p>Nephrite and its imitations, carving techniques and tool marks, surface alteration and patina as evidence of age.</p><a class="more" href="/jade-bronze.html#jade">Explore jade →</a></div></article>
+   <article class="card"><img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, Atlas reference object RO-BRONZE-036" loading="lazy"><div class="card-body"><h3>Bronze</h3><p>Ritual bronze forms, casting technology, corrosion layers and patina, and the diagnostic value of trace elements.</p><a class="more" href="/jade-bronze.html#bronze">Explore bronze →</a></div></article>
   </div>
  </div>
 </section>
@@ -298,7 +299,7 @@ def build_home():
 
 <section class="section">
  <div class="wrap split">
-  <img src="/images/atlas-ming-028-anhua.jpg" alt="Anhua incised dragon under raking light on an imperial yellow-glazed vase, Atlas reference object RO-MING-028" loading="lazy">
+  <img class="contain" src="/images/yellow-vase-chenghua-mark.jpg" alt="Base of a yellow-glazed vase with the six-character Chenghua reign mark in underglaze blue" loading="lazy">
   <div class="prose"><span class="eyebrow">Diagnostic Atlas</span><h2 style="margin-top:0">Diagnostic Atlas of Chinese Porcelain</h2>
   <p>A scientific reference system of documented objects from the Tang to the Qing dynasty. Each entry records the image, the diagnostic feature, its description, the method of observation and the limits of its interpretation.</p>
   <p><a class="btn" href="/atlas.html">About the Atlas</a></p></div>
@@ -536,7 +537,7 @@ def build_chapters(b):
               (f'<a href="{nxt[3]}.html">{esc(nxt[1])} →</a>' if nxt else '<a href="./">Contents →</a>') + '</div>'
         isbn = f' ISBN {b["isbn"]}.' if b["isbn"] else ""
         body = f'''<div class="wrap reader">
- <aside><h4>{esc(b["title"])}</h4><ol>{side}</ol><p style="margin-top:16px"><a href="./">About the book</a></p></aside>
+ <aside><h4>{esc(b["title"])}</h4><ol>{side}</ol><p style="margin-top:16px"><a href="./">About the book</a></p><p style="margin-top:14px"><a class="btn btn-small" href="/index.html">← Back to Home</a></p></aside>
  <article class="prose">
   <div class="crumbs"><a href="/index.html">Home</a> / <a href="/library.html">Library</a> / <a href="./">{esc(b["title"])}</a> / {label(n)}</div>
   <span class="eyebrow">{label(n)}</span>
