@@ -35,7 +35,7 @@ NAV = [("index.html", "Home"), ("porcelain.html", "Porcelain"), ("jade-bronze.ht
 FOOTER = [
     ("about.html", "About the Project", "Purpose and scope of the scientific library."),
     ("author.html", "About the Author", "Biography and research of Professor Nona Dronova."),
-    ("literature.html", "Scientific Literature", "Bibliography and reference sources."),
+    ("literature.html", "Scientific Literature", "The author’s scientific articles on Zenodo."),
     ("library.html", "Library", "Monographs, articles and reference works."),
     ("publications.html", "Zenodo Publications", "Open-access research papers with DOI."),
 ]
@@ -456,8 +456,8 @@ def build_library():
   <div class="prose"><h2 style="margin-top:0">Scientific articles</h2>
   <p>More than 240 open-access articles on the authentication of individual objects and on diagnostic method are published on Zenodo, each with its own DOI.</p>
   <p><a class="btn" href="/publications.html">Zenodo publications</a></p></div>
-  <div class="prose"><h2 style="margin-top:0">Reference sources</h2>
-  <p>The bibliography of works by other scholars on which the research relies is collected separately.</p>
+  <div class="prose"><h2 style="margin-top:0">Complete list of articles</h2>
+  <p>All scientific articles of the author, grouped by dynasty and period, with their DOIs.</p>
   <p><a class="btn" href="/literature.html">Scientific literature</a></p></div>
  </div>
 </section>'''
@@ -587,8 +587,8 @@ def build_about():
  <ul>
   <li><strong>Library</strong> — the author's own works: monographs, articles and reference books.</li>
   <li><strong>Diagnostic Atlas</strong> — documented reference objects with their diagnostic features.</li>
-  <li><strong>Scientific literature</strong> — the bibliography of sources by other scholars on which the research relies.</li>
-  <li><strong>Zenodo publications</strong> — open-access research papers with permanent DOIs.</li>
+  <li><strong>Scientific literature</strong> — the complete list of the author’s scientific articles, grouped by dynasty.</li>
+  <li><strong>Zenodo publications</strong> — selected methodological papers and the Zenodo records of the monographs.</li>
  </ul>
  <h2>Language</h2>
  <p>The monographs were written and published in Russian. The English edition is prepared chapter by chapter; each chapter page gives the original Russian title. Terms of Chinese origin are given in pinyin, with Chinese characters where they help identification.</p>
@@ -597,52 +597,34 @@ def build_about():
     page("about.html", "About the Project", "Purpose and structure of the Chinese Antiques scientific library: monographs, diagnostic atlas, literature and open-access publications on Chinese porcelain, jade and bronze.",
          body, crumbs=[("About the Project", "about.html")], graph=[{"@type": "AboutPage", "url": BASE + "/about.html", "name": "About the Project"}])
 
-JADE_LIT = [
-    ("Anderson, B. W.", "Gem Testing.", "Moscow: Mir, 1983. Russian edition."),
-    ("Burtseva, M. V., Ripp, G. S., Posokhov, V. F., Murzintseva, A. E.", "On the assessment of the sources of the fluids that formed the nephrites of Eastern Siberia.", "20th Symposium on Isotope Geochemistry, Vernadsky Institute of Geochemistry and Analytical Chemistry, Moscow, November 2013. In Russian."),
-    ("Vysotsky, S. V., Ignatiev, A. V., Levitsky, V. I., et al.", "New data on the stable isotopes of minerals of the corundum-bearing formations of Northern Karelia (Russia).", "Doklady Akademii Nauk, vol. 439, no. 1, pp. 95–98. In Russian."),
-    ("Paffengolts, K. N., et al. (eds.)", "Geological Dictionary. 2 vols.", "Moscow: Nedra, 1978. In Russian."),
-    ("Kievlenko, E. Ya. (ed.)", "Decorative Varieties of Coloured Stone of the USSR.", "Moscow: Nedra, 1989. In Russian."),
-    ("Dronova, N. D.", "Jewellery.", "Moscow: Yuvelir Publishing House, 1996. In Russian."),
-    ("Kievlenko, E. Ya., Senkevich, N. N., Gavrilov, A. P.", "Geology of Gemstone Deposits.", "Moscow: Nedra, 1974. In Russian."),
-    ("Komissarov, S. A.", "Ancient nephrites of Eastern Turkestan (Xinjiang): their distribution and use.", "In: Eurasia: Cultural Heritage of Ancient Civilisations, issue 2. Horizons of Eurasia, ed. O. A. Mitko. Novosibirsk, 1999, pp. 7–10. In Russian."),
-    ("Matlins, A. L., Bonanno, A. C.", "Jewelry & Gems: The Buying Guide.", "Moscow: Delo i Servis, 2001. Russian edition."),
-    ("Miller, A. M.", "Gems and Jewelry Appraising.", "Moscow: Kvinto-Konsalting, 2010. Russian edition."),
-    ("Portnov, A. M.", "The rumble of the Earth and the locomotive whistle.", "Priroda, 2015, no. 7, pp. 63–68. In Russian."),
-    ("Read, P. G.", "Gemmology.", "Moscow: Mir, 2003. Russian edition."),
-    ("Sinkankas, J.", "Gem Cutting: A Lapidary's Manual.", "Moscow: Mir, 1989. Russian edition."),
-    ("Suturin, A. N., Zamaletdinov, R. S.", "Nephrites.", "Novosibirsk: Nauka, 1984, pp. 104–118. In Russian."),
-    ("Fersman, A. E.", "Stories about Gems.", "Moscow: Nauka, 1974. In Russian."),
-    ("Schumann, W.", "The World of Stones: Precious and Ornamental Stones.", "Moscow: Mir, 1986. Russian edition."),
-    ("Hamada, K., Mizuno, S.", "Chifeng Hongshanhou.", "Archaeologia Orientalis, ser. A, no. 6. Far-Eastern Archaeology Society of Japan, 1938."),
-    ("Douglas, J. G.", "Review of Some Recent Research on Early Chinese Jades.", "Department of Conservation and Scientific Research, Freer Gallery of Art and Arthur M. Sackler Gallery, Washington, D.C., 2005."),
-    ("Cook, F. A.", "Raised relief on nephrite jade artifacts: observations, explanations and implications.", "Journal of Archaeological Science 40 (2013): 943–954."),
-    ("Wilkins, C. J., Tennant, W. C., Williamson, B. E., McCammon, C. A.", "", "American Mineralogist 88 (2003): 1336–1344."),
-    ("Aerts, A., Janssens, K., Adams, F.", "A chemical investigation of altered Chinese jade art objects.", "Orientations, November 1995, pp. 79–80."),
-    ("Tan, L. P., Chen, C. H., Tsien, H. H., Lo, H. J., Frey, R., Yu, B. S.", "Mineralogical criteria for archaic jades.", "In: Tsien, H. H. (ed.), Mineralogical Studies of Archaic Jades. Acta Geologica Taiwanica, Special Issue no. 32 (1996), pp. 169–192."),
-    ("Tsien, H. H., Fang, J. N.", "Mineralogy and alteration of Chinese jade artifacts.", "Western Pacific Earth Sciences 2 (2002): 239–250."),
-]
-
 def build_literature():
-    cited = [
-        ("Arapova, T. B.", "Chinese Porcelain in the Hermitage Collection (Late 14th – First Third of the 18th Century). Catalogue.", "Leningrad, 1977. In Russian."),
-        ("Bogachikhin, M. M.", "Ceramics of China.", "Moscow, 1998. In Russian."),
-        ("Kuzmenko, L. I.", "Chinese Porcelain of the 17th–18th Centuries.", "State Museum of Oriental Art, Moscow, 2009. In Russian."),
-    ]
-    fmt = lambda L: "".join(f'<li>{esc(a)} {"<em>" + esc(t) + "</em> " if t else ""}{esc(p)}</li>' for a, t, p in L)
-    body = head_band("Scientific Literature", "Bibliography of works by other scholars on which the research in this library relies. The author's own works are listed in the Library.",
-                     crumbs=[("Scientific Literature", "literature.html")], eyebrow="Bibliography") + f'''
-<section class="section"><div class="wrap prose">
- <h2 style="margin-top:0" id="porcelain">Porcelain</h2>
- <p>Sources cited in <a href="/{PORCELAIN["slug"]}/"><em>{esc(PORCELAIN["title"])}</em></a>:</p>
- <ul class="biblio">{fmt(cited)}</ul>
- <h2 id="jade">Jade, gemmology and bronze</h2>
- <p>Recommended literature from <a href="/{JADE["slug"]}/"><em>{esc(JADE["title"])}</em></a>:</p>
- <ul class="biblio">{fmt(JADE_LIT)}</ul>
- <div class="note">The bibliography is expanded as further chapters of the monographs are translated.</div>
+    data = json.load(open(os.path.join(ROOT, "tools", "content", "zenodo_publications.json"), encoding="utf-8"))
+    total = sum(len(g["items"]) for g in data)
+    short = lambda t: t.replace("Qing Dynasty — ", "").replace(" Period", "").replace(" Dynasty", "")
+    jump = " ".join(f'<a class="tag" href="#{g["id"]}">{esc(short(g["title"]))}</a>' for g in data)
+    blocks, arts = [], []
+    for g in data:
+        lis = []
+        for it in sorted(g["items"], key=lambda x: (x["year"], x["title"])):
+            doi = it["url"].split("doi.org/")[-1].lower()
+            repo = "Zenodo" if "zenodo" in doi else "Figshare"
+            lis.append(f'<li><div class="pt"><a href="{esc(it["url"])}" target="_blank" rel="noopener">{esc(it["title"])}</a></div>'
+                       f'<div class="pm">Dronova, N. · {esc(it["year"])} · {repo} · doi:{esc(doi)}</div></li>')
+            arts.append({"@type": "ScholarlyArticle", "name": it["title"], "datePublished": it["year"], "url": it["url"],
+                         "author": {"@id": PERSON_ID}})
+        blocks.append(f'<h2 id="{g["id"]}">{esc(g["title"])} <small style="font-family:var(--sans);font-size:.85rem;color:var(--muted)">{esc(g["span"])} · {len(g["items"])}</small></h2><ul class="pubs">{"".join(lis)}</ul>')
+    body = head_band("Scientific Literature", f"The scientific articles of Professor Nona Dronova on the authentication of ancient Chinese porcelain: {total} open-access publications with DOI, grouped by dynasty and period.",
+                     crumbs=[("Scientific Literature", "literature.html")], eyebrow="Author’s scientific articles") + f'''
+<section class="section"><div class="wrap prose" style="max-width:900px">
+ <p>All articles are published in open access (CC BY 4.0), most of them in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em>, each with a permanent DOI. The list follows the publication index of the <a href="{ATLAS}publications.html" target="_blank" rel="noopener">Diagnostic Atlas</a>.</p>
+ <p style="display:flex;flex-wrap:wrap;gap:6px">{jump}</p>
+ {"".join(blocks)}
 </div></section>'''
-    page("literature.html", "Scientific Literature — Bibliography", "Bibliography of scholarly sources on Chinese porcelain, jade, gemmology and bronze used in the research of the Chinese Antiques scientific library.",
-         body, crumbs=[("Scientific Literature", "literature.html")], graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature"}])
+    page("literature.html", "Scientific Literature — Articles by Nona Dronova", f"{total} open-access scientific articles by Professor Nona Dronova on the authentication of ancient Chinese porcelain, Tang to Qing dynasties, with DOI.",
+         body, crumbs=[("Scientific Literature", "literature.html")],
+         graph=[{"@type": "CollectionPage", "url": BASE + "/literature.html", "name": "Scientific Literature", "author": {"@id": PERSON_ID},
+                 "mainEntity": {"@type": "ItemList", "numberOfItems": total,
+                                "itemListElement": [{"@type": "ListItem", "position": k + 1, "item": a} for k, a in enumerate(arts)]}}])
 
 def build_publications():
     pubs = [
