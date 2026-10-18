@@ -21,8 +21,9 @@ PERSON_ID = BASE + "/author.html#person"
 PERSON = {
     "@type": "Person", "@id": PERSON_ID, "name": "Nona Dronova",
     "alternateName": "Nona Dmitrievna Dronova",
-    "jobTitle": "Professor, Doctor of Technical Sciences",
-    "description": "Gemmologist and researcher in the authentication of antique Chinese porcelain, jade and bronze; author of the Dronova gemmological optical microscopy (GOM / BEINOS) method.",
+    "jobTitle": "Professor, Doctor of Technical Sciences; Chair of the Collegium of Expert Gemmologists of the Russian Federation",
+    "description": "Gemmologist and researcher; author of non-destructive methods for the authentication of Chinese porcelain (BEINOS, DEE, LIE, PLIC), jade (STA) and bronze (TETA).",
+    "alumniOf": ["Moscow School of Art Crafts", "Moscow State Geological Prospecting Institute"],
     "url": BASE + "/author.html", "image": BASE + "/images/nona-dronova.jpg",
     "sameAs": [ORCID, STUDIO, ATLAS, ATLAS_JB],
     "knowsAbout": ["Chinese porcelain", "Chinese jade", "Chinese bronze", "Gemmology",
@@ -309,7 +310,8 @@ def build_home():
 <section class="section alt">
  <div class="wrap split rev">
   <div class="prose"><span class="eyebrow">About the author</span><h2 style="margin-top:0">Professor Nona Dronova</h2>
-  <p>Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist with forty years of practice. Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics and author of a non-destructive method of authentication based on gemmological optical microscopy.</p>
+  <p>Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist with more than forty years of practice; Chair of the Collegium of Expert Gemmologists of the Russian Federation and Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics.</p>
+  <p>Author of non-destructive methods for the authentication of Chinese porcelain (BEINOS, DEE, LIE, PLIC), jade (STA) and bronze (TETA).</p>
   <p><a class="btn" href="/author.html">Read the biography</a></p></div>
   <img src="/images/nona-dronova.jpg" alt="Professor Nona Dronova" loading="lazy" style="max-width:420px;justify-self:center">
  </div>
@@ -559,41 +561,47 @@ def build_chapters(b):
              crumbs=[("Library", "library.html"), (b["title"], b["slug"] + "/"), (t, f'{b["slug"]}/{s_}.html')], graph=g)
 
 def build_author():
-    body = head_band("Professor Nona Dronova", "Doctor of Technical Sciences · Ph.D. in Geology and Mineralogy · Gemmologist", crumbs=[("About the Author", "author.html")], eyebrow="About the author") + f'''
+    bio = md_to_html(os.path.join(ROOT, "tools", "content", "author.md"))
+    toc_items = re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', bio)
+    toc = "".join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc_items)
+    body = head_band("Professor Nona Dmitrievna Dronova", "Doctor of Technical Sciences · Ph.D. in Geology and Mineralogy · Professor · Gemmologist, researcher and artist", crumbs=[("About the Author", "author.html")], eyebrow="About the author") + f'''
 <section class="section">
  <div class="wrap split cover-split">
-  <img src="/images/nona-dronova.jpg" alt="Professor Nona Dronova" width="380" height="500">
+  <img src="/images/nona-dronova.jpg" alt="Professor Nona Dmitrievna Dronova" width="380" height="500">
   <div class="prose">
    <dl class="facts">
-    <dt>Full name</dt><dd>Nona Dmitrievna Dronova</dd>
-    <dt>Degrees</dt><dd>Doctor of Technical Sciences (D.Sc. in Engineering); Ph.D. in Geology and Mineralogy; Professor</dd>
-    <dt>Experience</dt><dd>Forty years of gemmological practice</dd>
-    <dt>Positions</dt><dd>Chairperson of the Expert Collegium for Antique Authentication; Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics</dd>
-    <dt>Method</dt><dd>Dronova non-destructive optical authentication (gemmological optical microscopy, GOM / BEINOS method)</dd>
+    <dt>Full name</dt><dd>Nona Dmitrievna Dronova (Дронова Нона Дмитриевна)</dd>
+    <dt>Degrees</dt><dd>Doctor of Technical Sciences; Ph.D. (Candidate of Sciences) in Geology and Mineralogy; Professor</dd>
+    <dt>Positions</dt><dd>Chair of the Collegium of Expert Gemmologists of the Russian Federation; Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics and of the Atlas of Ancient Chinese Jade and Bronze</dd>
+    <dt>Experience</dt><dd>More than forty years of gemmological practice</dd>
+    <dt>Publications</dt><dd>More than 79 scientific and methodological works including eight monographs; more than 280 open-access articles with DOI</dd>
+    <dt>Methods</dt><dd>Gemmological optical microscopy (GOM) · BEINOS · DEE · SDE · LIE · PLIC · STA · TETA</dd>
     <dt>Art</dt><dd>Painter and art theorist; Member of the Union of Artists of Russia since 2002</dd>
     <dt>ORCID</dt><dd><a href="{ORCID}" target="_blank" rel="noopener">0009-0007-4867-9074</a></dd>
    </dl>
-   <h2>Research</h2>
-   <p>Professor Nona Dronova works at the intersection of art history, materials science and the technology of the traditional applied arts. Her research focuses on the instrumental and visual-structural diagnostics of works of decorative art, above all ancient Chinese porcelain, jade and bronze.</p>
-   <p>Her method moves step by step from the macroscopic level — proportions, silhouette, composition — to the microscopic and physico-chemical parameters of the surface: glaze structure, crackle, inclusions, firing traces and the signatures of natural ageing. Porcelain is thus read not only as a work of art, but as a technological document of its time.</p>
-   <h2>In this library</h2>
-   <ul>
-    <li><a href="/{PORCELAIN["slug"]}/">{esc(PORCELAIN["title"])}</a> ({PORCELAIN["year"]})</li>
-    <li><a href="/{JADE["slug"]}/">{esc(JADE["title"])}</a> ({JADE["year"]})</li>
-    <li><a href="/publications.html">Zenodo publications</a></li>
-   </ul>
-   <h2>Other projects</h2>
-   <ul>
-    <li><a href="{ATLAS}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Ceramics</a></li>
-    <li><a href="{ATLAS_JB}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Jade and Bronze</a></li>
-    <li><a href="{STUDIO}" target="_blank" rel="noopener">Nona Dronova Art Studio</a> — painting, textile art and jewellery</li>
-   </ul>
+   <h3>On this page</h3>
+   <ul class="mini-toc">{toc}</ul>
   </div>
  </div>
-</section>'''
+</section>
+<section class="section alt"><div class="wrap prose author-bio">
+ {bio}
+ <h2>In this library</h2>
+ <ul>
+  <li><a href="/{PORCELAIN["slug"]}/">{esc(PORCELAIN["title"])}</a> ({PORCELAIN["year"]})</li>
+  <li><a href="/{JADE["slug"]}/">{esc(JADE["title"])}</a> ({JADE["year"]})</li>
+  <li><a href="/literature.html">Scientific articles</a> · <a href="/publications.html">Zenodo publications</a></li>
+ </ul>
+ <h2>Other projects</h2>
+ <ul>
+  <li><a href="{ATLAS}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Ceramics</a></li>
+  <li><a href="{ATLAS_JB}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Jade and Bronze</a></li>
+  <li><a href="{STUDIO}" target="_blank" rel="noopener">Nona Dronova Art Studio</a> — painting, textile art and jewellery</li>
+ </ul>
+</div></section>'''
     p = dict(PERSON); p["image"] = BASE + "/images/nona-dronova.jpg"
-    page("author.html", "About the Author — Professor Nona Dronova",
-         "Professor Nona Dronova: Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist, Scientific Director of the Global Diagnostic Atlas of Ancient Chinese Ceramics.",
+    page("author.html", "About the Author — Professor Nona Dmitrievna Dronova",
+         "Professor Nona Dronova: Doctor of Technical Sciences, Ph.D. in Geology and Mineralogy, gemmologist. Her methods for the non-destructive authentication of Chinese porcelain, jade and bronze: BEINOS, DEE, LIE, PLIC, STA and TETA.",
          body, cur="author.html", og_image="/images/nona-dronova.jpg", og_type="profile", crumbs=[("About the Author", "author.html")],
          graph=[{"@type": "ProfilePage", "url": BASE + "/author.html", "mainEntity": {"@id": PERSON_ID}}, p])
 

@@ -233,3 +233,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;color:var(--ink);line-heigh
   .nav a{padding:12px 4px;border-bottom:1px solid var(--border)}
 }
 .footer-brand .n{white-space:nowrap;font-size:1.05rem}
+.mini-toc{columns:2;column-gap:24px;font-size:.9rem}
+.author-bio{max-width:820px}
+.author-bio h2{border-top:1px solid var(--border);padding-top:28px}
+.author-bio h2:first-child{border-top:0;padding-top:0;margin-top:0}
