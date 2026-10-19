@@ -310,6 +310,10 @@ def page(path, title, desc, body, cur=None, og_image="/images/og-home.jpg", og_t
 {extra_head}<script type="application/ld+json">
 {ld}
 </script>
+<script>
+  window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 {header(cur)}
