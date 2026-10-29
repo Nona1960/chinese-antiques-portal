@@ -73,6 +73,14 @@ Such information is valuable for investigating technological consistency and pos
 
 The survival of a complete vessel does not, by itself, establish its date or kiln of manufacture. Its significance lies in the broader range of technological information available for examination.
 
+## 2.3. Provenance and storage history
+
+According to the owner's records, the vase has been in a private collection in the United States since 1930, where it was kept in storage together with other valuable and rare vases.
+
+The vase was never excavated and has no burial history. It is therefore a handed-down (non-excavated) object, and all surface changes observed on it developed in air, not in soil.
+
+For a long period the vase stood on an old vulcanised-rubber stand. This storage history is directly relevant to the interpretation of the zinc and sulfur measured on the base (Section 5.7).
+
 # 3. Microscopic and Visual Examination
 
 ## 3.1. Research approach
@@ -301,19 +309,29 @@ However, it must not be interpreted as proof of a common geological source.
 
 The similarity could also be influenced by instrumental calibration, substrate contributions to the glaze measurements, or other analytical effects.
 
-## 5.7. Zinc heterogeneity
+## 5.7. Zinc and sulfur on the base: a trace of the old rubber stand
 
-Zinc displays the largest variation among the measured glaze trace elements.
+Zinc displays the largest variation among the measured elements: 125 ppm in the body glaze (G1), 2,091 ppm in the underside glaze (G2) and 2,558 ppm on the exposed foot ring (B1).
 
-G1 contains 125 ppm Zn, whereas G2 contains 2,091 ppm.
+Sulfur and lead rise in the same direction from the body to the base:
 
-The underside glaze measurement is therefore approximately 16.7 times higher.
+**Table 3a. Zinc, sulfur and lead from the body to the base, ppm**
 
-The exposed ceramic body contains 2,558 ppm Zn.
+| Element | G1 — body glaze | G2 — underside glaze | B1 — foot ring |
+|---|---:|---:|---:|
+| Zn | 125 | 2,091 | 2,558 |
+| S | 3,120 | 3,830 | 5,890 |
+| Pb | 5 | 16 | 31 |
 
-Several explanations are possible, including local compositional heterogeneity, surface contamination, differences in glaze thickness, and substrate contributions.
+**The zinc is located on the surface, not in the glaze recipe.** If zinc were part of the glaze, it would be equally high in G1, where it is only 125 ppm. The underside glaze is thin, and portable XRF reads heavy elements through it from the body below (approximate information depths in silicate: Fe ≈ 0.3 mm, Zn ≈ 0.8 mm, Zr ≈ 3.8 mm). However, this substrate contribution cannot explain the zinc. Iron in G2 (0.856 wt.%) is the same as in G1 (0.866 wt.%), so little body signal reached the detector. Elements reading deeper than zinc (Sr, Zr, Y, Nb) show only about one third of the body value in G2, whereas zinc shows about four fifths. The excess zinc must therefore sit on or very near the surface of the base.
 
-This variation should be investigated through additional measurements before any historical or technological interpretation is attempted.
+**The zinc is not from the clay.** Clays of the same Upper Carboniferous Benxi Formation in western Henan contain only about 10–111 ppm Zn, and zinc in these sequences is associated with sulfides and is easily mobilised. In a strongly reducing firing at about 1,200 °C zinc tends to be lost rather than retained. A body value of 2,558 ppm is therefore incompatible with the local raw material and must have been acquired after firing.
+
+**The sulfur is also post-firing.** Sulfates decompose at the firing temperature of Ru ware, so 0.59 wt.% sulfur cannot survive in a fired body. The sulfur X-ray line is also shallow (tens of micrometres), so it reports the surface only.
+
+**Explanation: the old vulcanised-rubber stand.** Vulcanised rubber of the early twentieth century contained zinc oxide (as an activator) and sulfur (as the vulcanising agent), and old rubber is known to release sulfur and to leave residues on objects resting on it. The combination of zinc **and** sulfur, their restriction to the base and foot ring — the areas of prolonged contact — and their maximum on the porous unglazed foot ring all correspond to this storage history (Section 2.3). Reddish granular residues visible on the bearing surface of the foot ring coincide with the B1 measurement spot and are consistent with crumbled old rubber.
+
+The zinc and sulfur are therefore interpreted as a modern storage contamination, not as a property of the vase's body or glaze. A paired measurement — directly on a residue patch and on a clean area of the foot ring — and a measurement after cleaning with a solvent are recommended to document this conclusion instrumentally.
 
 # 6. Comparison with Archaeological Ru Ware from Qingliangsi
 
@@ -387,15 +405,69 @@ Possible explanations include a different glaze raw material (for example, a low
 
 This observation requires verification by repeated calibrated measurements and, ideally, by an independent laboratory method before any interpretation is attempted.
 
-## 6.5. Summary of the comparison
+## 6.5. A body prepared for a large vessel
 
-The investigated vase shares the fundamental technological profile of Qingliangsi ceramics: an alumina-rich, calcium-poor body under a calcium-bearing glaze, with comparable titanium.
+The comparison with Qingliangsi bodies must take into account a key finding of Ding et al. (2013): official Ru bodies were made from the same raw materials as Northern Song popular Ru, and the difference lay in the processing — finer grinding, more thorough levigation (settling in water) and wedging. The chemical ranges of the official and popular groups therefore overlap almost completely, and a value near the edge of one range does not indicate the status of an object. Moreover, the official reference group comprises only 15 sherds, mostly of small forms such as dishes, bowls and brush washers.
 
-In several minor constituents — Fe₂O₃ in body and glaze, TiO₂ in the body, and CaO in the glaze — the vase lies closer to Northern Song popular Ru or official Ru type II than to official Ru type I.
+**The local clay.** Geological studies of the Qingliangsi area describe a single Upper Carboniferous sequence (Benxi Formation) containing a hematite iron layer, a bauxite layer and an upper mudstone hosting ceramic clay. Such high-alumina clays are enriched in immobile elements. The body of the vase matches clays of this formation in western Henan:
 
-The principal deviations are elevated potassium in both body and glaze and markedly lower manganese in the glaze.
+**Table 5b. Immobile trace elements of the vase body compared with Benxi Formation clays (Poci, western Henan), ppm**
 
-The results support technological comparison with Qingliangsi production but do not establish an exact chemical match with any single reference group.
+| Element | Vase body, B1 | Benxi Formation clays |
+|---|---:|---:|
+| Cr | 123 | 94–152 |
+| V | 170 | 64–328 |
+| Zr | 336 | 136–496 |
+| Ce | 250 | 154–282 |
+| La | 133 | 66–126 |
+| Y | 40 | 20–94 |
+| Th | 27 | 39–64 |
+| Nb | 17 | 19–64 |
+
+*Portable XRF determines Ce, La and V with large uncertainties (about ±90–130 ppm).*
+
+This geochemical fingerprint identifies the body as a northern high-alumina clay of the Ru kiln region. Together with the high TiO₂ (0.96 wt.%) and Al₂O₃ (25 wt.%), it also excludes the porcelain bodies of Jingdezhen, which are low in titanium, and therefore excludes Qing-dynasty Jingdezhen imitations of Ru glaze.
+
+**The signature of a refined, plastic body.** The deviations of the vase body from the official Ru mean are not random; they point in a consistent direction:
+
+**Table 5c. Body ratios indicating raw-material preparation**
+
+| | Official Ru, mean | Vase body | Direction |
+|---|---:|---:|---|
+| Fe₂O₃, wt.% | 2.29 | 1.94 | lower |
+| TiO₂, wt.% | 0.76 | 0.96 | higher |
+| Fe₂O₃ / TiO₂ | ≈3.0 | ≈2.0 | markedly lower |
+| K₂O, wt.% | 1.71 | 2.90 | higher |
+
+This pattern is interpreted as the result of especially thorough preparation of the body for a large vessel:
+
+- **Lower iron.** In the Benxi Formation clays iron occurs partly as relatively coarse hematite or siderite grains and concretions. During levigation, coarse heavy grains settle and are removed, lowering the iron content.
+- **Higher titanium.** In high-alumina clays titanium is carried mainly by very fine anatase particles, which concentrate in the fine fraction. Retaining the finest fraction raises the relative titanium content.
+- **Higher potassium.** The fine, plastic fraction is richer in illite and mica. A large vase requires a body with high plasticity and green strength, so that the form can be thrown, trimmed and dried without cracking and can carry its own weight in the kiln.
+
+The same features are visible on the foot ring: dense, fine trimming marks with sharp edges and no coarse grains. Microscopic measurement of quartz grain size and of iron-rich inclusions on the foot ring, compared with the fine, evenly distributed quartz described by Ding et al. (2013) for official Ru bodies, would provide a direct test of this interpretation.
+
+## 6.6. Low manganese and the sky-blue colour
+
+The sky-blue (天青) colour of Ru glaze is produced by ferrous iron (Fe²⁺) formed in a reducing firing; ferric iron (Fe³⁺) gives yellowish to brownish tones. Manganese acts as an oxidising agent in glass: it converts Fe²⁺ into Fe³⁺ and has been used for centuries as a glass decolouriser for exactly this reason, and in excess it adds greyish or violet tones. In a celadon glaze, manganese is therefore an enemy of the clear sky-blue colour.
+
+Ding et al. (2020) show that the glazes of the official kilns (Ru, and the Southern Song official kilns that inherited the Ru method) are characterised by low TiO₂ and MnO, which they connect with the stable sky-blue colour. The official potters moved away from the traditional plant-ash recipe towards potassium-rich feldspar or weathered porcelain stone combined with limestone. Plant ash is the principal carrier of manganese in traditional glazes, and feldspar is a principal carrier of potassium.
+
+The glaze of the vase follows this official recipe in an extreme form: **very low manganese** (MnO ≈ 0.01 wt.%) and **high potassium** (K₂O equivalents 5.0–7.0 wt.%). The two features are not separate anomalies but the consequence of one technological choice — a glaze built on feldspathic material and limestone, with little or no ash. The result is the clear sky-blue colour of the vase.
+
+This direction is also confirmed by complete museum vessels. In the British Museum study of ten intact Ru vessels from the Sir Percival David collection, Ru ware had significantly lower manganese and strontium and higher potassium than Korean Goryeo celadon, and the manganese content of the Ru group was remarkably uniform. The vase shows the same pattern: low Mn, low Sr, high K.
+
+**A selection hypothesis.** Among sherds excavated at Qingliangsi, only a minority show the true sky-blue colour; many are whitish or pale. If low manganese favours the sky-blue colour, the successful sky-blue products would be expected to contain less manganese than the average kiln-site sherd. A large, flawless sky-blue vase that passed the selection of the official workshop would then represent the low-manganese end of production. This hypothesis connects the glaze chemistry directly with the methodological argument of Section 12 and can be tested by comparing manganese in sky-blue and off-colour sherds.
+
+The absolute manganese level of the vase, several times lower than in the reference glazes, should be confirmed by a calibrated laboratory measurement.
+
+## 6.7. Summary of the comparison
+
+The vase shares the fundamental technological profile of Qingliangsi ceramics: a high-alumina, calcium-poor body of the local Benxi Formation clay under a calcium-bearing lime glaze.
+
+Its deviations from the average of the excavated sherds form a consistent picture rather than a set of contradictions: a body especially refined and made plastic for a large vessel (lower iron, higher titanium and potassium), and a glaze following the official low-manganese, high-potassium recipe in an extreme form, which accounts for its clear sky-blue colour.
+
+The zinc and sulfur on the base are explained by the storage history of the vase on an old rubber stand and are not a property of the ceramic.
 
 # 7. Comparison with PIXE Studies of Qingliangsi and Zhanggongxiang
 
@@ -751,7 +823,7 @@ Fourth, the trace-element profile includes several elements used in provenance r
 
 Fifth, some measured characteristics overlap with published Qingliangsi and related reference datasets, while others differ.
 
-The most significant discrepancies include elevated potassium in the body and glaze, markedly lower manganese in the glaze than in the Qingliangsi reference glazes, strontium in the glaze and body, and the pronounced difference in zinc between the two glaze locations.
+The most significant differences from the excavated reference sherds are elevated potassium in the body and glaze, markedly lower manganese in the glaze, lower iron and higher titanium in the body, and strontium in the glaze and body. As discussed in Sections 6.5 and 6.6, these differences form a consistent technological picture: a body refined for a large vessel and a glaze following the official low-manganese recipe. The zinc on the base is explained by contact with an old rubber stand (Section 5.7).
 
 These differences should not be concealed by selective comparison.
 
@@ -793,6 +865,14 @@ The method can provide useful non-destructive elemental information, but rigorou
 
 **12.** Further work should prioritise repeated calibrated XRF measurements, verification of selected trace elements by an independent laboratory method, non-destructive structural analysis of the glaze, and direct comparison with securely attributed complete vessels.
 
+**13.** The vase has been in a private collection in the United States since 1930 and has no burial history. The elevated zinc and sulfur on the base and foot ring are a surface contamination from long contact with an old vulcanised-rubber stand, not a property of the body or glaze.
+
+**14.** The immobile trace elements of the body (Cr, V, Zr, Ce, La, Y) match the high-alumina clays of the Benxi Formation of western Henan, the formation underlying the Qingliangsi kiln area. Together with TiO₂ ≈ 0.96 wt.% this identifies a northern Ru-region body and excludes Jingdezhen porcelain bodies.
+
+**15.** Lower iron, higher titanium and higher potassium in the body are interpreted as the signature of an especially well levigated, plastic body prepared for a large vessel.
+
+**16.** Very low manganese together with high potassium in the glaze corresponds to the official Ru glaze recipe based on feldspathic material and limestone rather than plant ash. Because manganese oxidises Fe²⁺ to Fe³⁺, its near absence favours the clear sky-blue colour of the vase. The same low-Mn, low-Sr, high-K direction distinguishes intact Ru vessels in the British Museum.
+
 The investigated grey-blue vase represents a valuable subject for further interdisciplinary research.
 
 Its elemental characteristics, visual properties, and complete form offer an opportunity to examine the relationships between ceramic chemistry, glaze technology, object quality, and the archaeological interpretation of Northern Chinese celadon production.
@@ -820,6 +900,14 @@ Its elemental characteristics, visual properties, and complete form offer an opp
 9. **Ding Yinzhong, Li He, Sun Xinmin, Wang Guangyao, Chen Tiemei, and Miao Jianmin** (2013). 清凉寺窑出土汝官瓷与民汝青瓷胎釉配方及工艺的对比研究 [Comparative study of the body and glaze recipes and technology of official Ru ware and popular Ru celadon excavated from the Qingliangsi kiln]. *Palace Museum Journal*, 2013(3), 62–73. Original Chinese publication: https://www.dpm.org.cn/Uploads/File/2018/06/05/u5b165f0de3b3f.pdf
 
 10. **Corrosion Research on Ru Porcelain Glazes Excavated at Qingliangsi, Baofeng, China.** (2023). *Coatings*, 13(6), 1011.
+
+11. **Ding Yinzhong, Li He, Wang Guangyao, Sun Xinmin, Tang Junjie, and Shen Qionghua** (2020). 试论汝官窑青瓷制釉技术的南传与发展 [On the southward transmission and development of the glaze technology of official Ru celadon]. *Palace Museum Journal*, 2020(4). https://www.dpm.org.cn/Uploads/File/2020/04/26/u5ea50570dcfaf.pdf
+
+12. **Mineralogical and geochemical features of karst bauxites from Poci (western Henan, China), implications for parental affinity and bauxitization.** (2019). *Ore Geology Reviews*. https://www.sciencedirect.com/science/article/abs/pii/S0169136818307005
+
+13. **Ji Qinghai, Wang Chunsong, Wang Hong, Liu Chuanquan, and Cheng Xingguo.** Geological characteristics and genesis of the Qingliangsi iron deposit, Baofeng County, Henan. https://xbdz.net.cn/cn/article/pdf/preview/20130309.pdf
+
+14. **Depth of analysis in portable XRF.** pXRF.org. https://www.pxrf.org/Concepts/DepthOfAnalysis/index.html
 
 *Bibliographic verification note: The author lists, publication metadata, and numerical transcriptions for several Chinese-language and museum studies should be checked against the original publications before release of the final version of record.*
 
