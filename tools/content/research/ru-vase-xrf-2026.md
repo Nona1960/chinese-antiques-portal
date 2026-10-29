@@ -11,7 +11,7 @@ The glaze exhibits a calcium-bearing silicate composition, with measured Ca conc
 
 Comparisons are made with published archaeological and museum investigations of Ru ware from Qingliangsi (清凉寺), celadon from Zhanggongxiang (张公巷), and related Song-period ceramic traditions. Particular attention is given to the research of Li Weidong and colleagues, Zhao Weijuan and colleagues, Wu Zhanjun and colleagues, and researchers associated with the Palace Museum and the British Museum.
 
-The investigated vase exhibits several chemical and technological characteristics comparable to Northern Chinese celadon traditions, including archaeological Northern Song Ru ware. However, differences in potassium, strontium, and certain trace-element relationships distinguish the object from some published reference groups.
+The investigated vase exhibits several chemical and technological characteristics comparable to Northern Chinese celadon traditions, including archaeological Northern Song Ru ware. However, differences in potassium, manganese, strontium, and certain trace-element relationships distinguish the object from some published reference groups.
 
 The paper also addresses an important methodological issue: archaeological kiln-site assemblages may contain manufacturing rejects, experimental pieces, firing failures, and fragments of originally successful vessels, whereas a complete, carefully finished vase provides access to a different range of technological evidence.
 
@@ -317,36 +317,85 @@ This variation should be investigated through additional measurements before any
 
 # 6. Comparison with Archaeological Ru Ware from Qingliangsi
 
-## 6.1. The investigation by Li Weidong and colleagues
+## 6.1. Reference data
 
 Li Weidong and colleagues investigated archaeological Ru ware from Qingliangsi using a combination of chemical and microstructural methods.
 
-Their research demonstrated the importance of crystalline phases and phase-separated structures in the formation of characteristic Ru glaze appearances.
+Their research demonstrated the importance of crystalline phases and phase-separated structures in the formation of characteristic Ru glaze appearances. Their published ceramic-body analyses included SiO₂ concentrations of approximately 62.48–65.95 wt.% and Al₂O₃ concentrations of approximately 25.91–28.95 wt.%.
 
-Published ceramic-body analyses included SiO₂ concentrations of approximately 62.48–65.95 wt.% and Al₂O₃ concentrations of approximately 25.91–28.95 wt.%.
+The most comprehensive single reference dataset is the comparative study by Ding Yinzhong, Li He, Sun Xinmin, Wang Guangyao, Chen Tiemei and Miao Jianmin (Palace Museum Journal, 2013). It reports the bodies and glazes of 35 excavated Qingliangsi samples in four groups: official Ru ware type I (汝官Ⅰ), official Ru ware type II (汝官Ⅱ, regarded by the authors as a transitional stage), Northern Song popular Ru celadon (民汝), and Jin–Yuan popular Ru celadon.
 
-To provide an initial comparison, the elemental concentrations obtained for the investigated vase can be converted into provisional oxide equivalents.
+The authors conclude that official Ru bodies were made from essentially the same raw materials as Northern Song popular Ru, and that the difference lay in more thorough processing — finer grinding, levigation and wedging — reflected in fine, evenly distributed quartz grains.
 
-Such calculations are useful for orientation but must not be confused with a calibrated, normalised oxide analysis.
+To provide a comparison, the elemental concentrations obtained for the investigated vase have been converted into provisional oxide equivalents. Such calculations are useful for orientation but must not be confused with a calibrated, normalised oxide analysis.
 
-**Table 5. Provisional ceramic-body comparison**
+## 6.2. Ceramic body
 
-| Component | Investigated vase: calculated oxide equivalent | Published Qingliangsi archaeological range |
-|---|---:|---:|
-| SiO₂ | 67.67 wt.% | 62.48–65.95 wt.% |
-| Al₂O₃ | 25.07 wt.% | 25.91–28.95 wt.% |
-| TiO₂ | 0.958 wt.% | Reported in archaeological bodies |
-| Fe₂O₃ | 1.94 wt.% | Reported in archaeological bodies |
+**Table 5. Ceramic body of the investigated vase compared with Qingliangsi bodies (Ding et al. 2013), wt.%, mean (range)**
 
-*The vase values are unnormalised oxide equivalents derived from elemental pXRF readings. They are not directly equivalent to laboratory bulk-oxide determinations.*
+| Oxide | **Vase, B1**\* | Official Ru (n = 15) | Popular Ru, Northern Song (n = 10) | Popular Ru, Jin–Yuan (n = 10) |
+|---|---:|---:|---:|---:|
+| Al₂O₃ | 25.07 | 26.51 (24.97–28.66) | 25.33 (23.12–26.97) | 22.92 (16.83–27.34) |
+| SiO₂ | 67.67 | 65.61 (63.03–67.47) | 66.99 (65.30–69.76) | 68.01 (63.52–73.78) |
+| K₂O | 2.90 | 1.71 (1.47–1.99) | 1.52 (1.35–1.77) | 2.09 (1.47–2.90) |
+| CaO | 1.22 | 0.96 (0.39–2.40) | 0.96 (0.43–2.00) | 1.20 (0.74–1.79) |
+| TiO₂ | 0.96 | 0.76 (0.63–0.92) | 0.88 (0.71–1.12) | 0.76 (0.61–1.00) |
+| Fe₂O₃ | 1.94 | 2.29 (2.07–2.51) | 2.18 (1.72–2.52) | 2.66 (2.25–3.19) |
+| MnO | not detected (< 0.07) | ≈0.02 (0.01–0.03) | ≈0.02 (0.01–0.03) | ≈0.02 (0.02–0.04) |
 
-The comparison indicates broad similarity in the aluminosilicate character of the ceramic body.
+*Unnormalised oxide equivalents calculated from the pXRF elemental readings of the exposed foot ring (B1); their sum is 99.8 wt.%. Na₂O and MgO are not determined by the instrument. Reference means and ranges are calculated from the individual analyses in Ding et al. (2013), Table 1. The detection limit for Mn in B1 (570 ppm) is too high for a meaningful comparison with the reference MnO values.*
 
-The provisional aluminium oxide equivalent lies slightly below the cited archaeological range, while the silica equivalent lies somewhat above it.
+The Al₂O₃ and CaO equivalents of the vase lie within the range of official Ru bodies.
 
-These differences should be considered in relation to analytical uncertainty and possible differences in raw materials.
+The SiO₂ and TiO₂ equivalents lie slightly above the official range, and the Fe₂O₃ equivalent slightly below it; all three fall within the range of Northern Song popular Ru bodies.
 
-The results support technological comparison but do not establish an exact chemical match.
+The clearest deviation is potassium. The provisional K₂O equivalent of 2.90 wt.% exceeds every official and Northern Song popular Ru body in the reference set and reaches only the upper limit of the Jin–Yuan group.
+
+## 6.3. Glaze
+
+**Table 5a. Minor glaze constituents of the investigated vase compared with Qingliangsi glazes (Ding et al. 2013), wt.%, mean (range)**
+
+| Oxide | **Vase G1**\* | **Vase G2**\* | Official Ru I (n = 10) | Official Ru II (n = 5) | Popular Ru, Northern Song (n = 10) | Popular Ru, Jin–Yuan (n = 10) |
+|---|---:|---:|---:|---:|---:|---:|
+| K₂O | 7.01 | 5.02 | 4.11 (3.48–4.81) | 3.38 (2.90–3.76) | 4.27 (3.40–4.60) | 3.73 (3.24–4.52) |
+| CaO | 10.63 | 9.10 | 12.21 (11.45–13.34) | 10.70 (10.10–11.31) | 6.97 (3.88–11.40) | 7.98 (5.19–10.54) |
+| TiO₂ | 0.23 | 0.16 | 0.13 (0.10–0.22) | 0.15 (0.13–0.17) | 0.11 (0.08–0.13) | 0.17 (0.10–0.28) |
+| MnO | 0.009 | 0.011 | 0.12 (0.08–0.21) | 0.13 (0.11–0.15) | 0.07 (0.05–0.09) | 0.09 (0.05–0.13) |
+| Fe₂O₃ | 1.24 | 1.22 | 2.01 (1.72–2.58) | 1.55 (1.39–1.65) | 1.49 (0.97–2.21) | 2.00 (1.20–3.67) |
+
+*Unnormalised oxide equivalents from the pXRF readings. Major glaze components (SiO₂, Al₂O₃) are not compared: on curved glaze surfaces without helium purge, portable XRF determines the light elements less reliably (the unnormalised oxide sum for G1 is 112.7 wt.%), and their information depth is only a few tens of micrometres. Reference means and ranges are calculated from Ding et al. (2013), Table 2.*
+
+The CaO equivalents of the vase glaze (10.63 and 9.10 wt.%) fall within the range of the Northern Song popular Ru glazes and close to official Ru type II.
+
+The TiO₂ equivalents lie within or at the upper limit of the official ranges.
+
+The Fe₂O₃ equivalents (1.24 and 1.22 wt.%) lie below the official Ru ranges and within the range of Northern Song popular Ru.
+
+The K₂O equivalents (7.01 and 5.02 wt.%) exceed all four reference groups.
+
+## 6.4. Manganese in the glaze
+
+Manganese was detected in both glaze measurements: 69 ppm (G1) and 89 ppm (G2), with 3σ uncertainties of 47 and 49 ppm. Expressed as oxide, this corresponds to approximately 0.009–0.011 wt.% MnO.
+
+The Qingliangsi glazes contain 0.08–0.21 wt.% MnO in the official groups and 0.05–0.13 wt.% in the popular groups.
+
+Even at the upper limit of the measurement uncertainty (approximately 0.015–0.018 wt.% MnO), the vase glaze lies several times below the lowest value in the reference set.
+
+Manganese is one of the elements found useful for distinguishing Ru ware from other celadon traditions in the British Museum study (Section 11). The low manganese content is therefore a significant observation.
+
+Possible explanations include a different glaze raw material (for example, a low-manganese calcareous component or plant ash), differences in calibration between portable XRF and the laboratory XRF used for the reference data, or a combination of both.
+
+This observation requires verification by repeated calibrated measurements and, ideally, by an independent laboratory method before any interpretation is attempted.
+
+## 6.5. Summary of the comparison
+
+The investigated vase shares the fundamental technological profile of Qingliangsi ceramics: an alumina-rich, calcium-poor body under a calcium-bearing glaze, with comparable titanium.
+
+In several minor constituents — Fe₂O₃ in body and glaze, TiO₂ in the body, and CaO in the glaze — the vase lies closer to Northern Song popular Ru or official Ru type II than to official Ru type I.
+
+The principal deviations are elevated potassium in both body and glaze and markedly lower manganese in the glaze.
+
+The results support technological comparison with Qingliangsi production but do not establish an exact chemical match with any single reference group.
 
 # 7. Comparison with PIXE Studies of Qingliangsi and Zhanggongxiang
 
@@ -702,7 +751,7 @@ Fourth, the trace-element profile includes several elements used in provenance r
 
 Fifth, some measured characteristics overlap with published Qingliangsi and related reference datasets, while others differ.
 
-The most significant discrepancies include potassium in the ceramic body, strontium in the glaze and body, and the pronounced difference in zinc between the two glaze locations.
+The most significant discrepancies include elevated potassium in the body and glaze, markedly lower manganese in the glaze than in the Qingliangsi reference glazes, strontium in the glaze and body, and the pronounced difference in zinc between the two glaze locations.
 
 These differences should not be concealed by selective comparison.
 
@@ -732,7 +781,7 @@ The method can provide useful non-destructive elemental information, but rigorou
 
 **6.** Selected elemental characteristics show partial correspondence with published archaeological and museum reference groups associated with Northern Chinese ceramics.
 
-**7.** Differences in potassium, strontium, and other elements demonstrate that the vase cannot presently be described as chemically identical to the published Qingliangsi reference datasets.
+**7.** Differences in potassium, manganese, strontium, and other elements demonstrate that the vase cannot presently be described as chemically identical to the published Qingliangsi reference datasets.
 
 **8.** The grey-blue glaze, its optical depth, and its crackle morphology are compatible with characteristics observed in historical celadon traditions. The presence of specific microcrystalline or phase-separated structures remains to be confirmed by appropriate analytical methods.
 
@@ -768,7 +817,7 @@ Its elemental characteristics, visual properties, and complete form offer an opp
 
 8. **Palace Museum comparative research on Ge ware and archaeological ceramic glaze compositions.** (2018). Original Chinese publication: https://www.dpm.org.cn/Uploads/File/2018/12/11/u5c0f2a8559ffc.pdf
 
-9. **Comparative investigation of official and popular Ru ware bodies and glazes excavated from Qingliangsi.** (2013). Original Chinese publication: https://www.dpm.org.cn/Uploads/File/2018/06/05/u5b165f0de3b3f.pdf
+9. **Ding Yinzhong, Li He, Sun Xinmin, Wang Guangyao, Chen Tiemei, and Miao Jianmin** (2013). 清凉寺窑出土汝官瓷与民汝青瓷胎釉配方及工艺的对比研究 [Comparative study of the body and glaze recipes and technology of official Ru ware and popular Ru celadon excavated from the Qingliangsi kiln]. *Palace Museum Journal*, 2013(3), 62–73. Original Chinese publication: https://www.dpm.org.cn/Uploads/File/2018/06/05/u5b165f0de3b3f.pdf
 
 10. **Corrosion Research on Ru Porcelain Glazes Excavated at Qingliangsi, Baofeng, China.** (2023). *Coatings*, 13(6), 1011.
 
