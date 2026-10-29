@@ -790,7 +790,7 @@ def build_publications():
  <p>Several hundred records are published in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em> (CC BY 4.0). The complete index, grouped by dynasty and linked to the reference objects, is maintained in the Atlas.</p>
  <p><a class="btn btn-gold" href="{ATLAS}publications.html" target="_blank" rel="noopener">Full index of publications ↗</a> <a class="btn" href="{ORCID}" target="_blank" rel="noopener">ORCID profile ↗</a></p>
  <h2>New research</h2>
- <ul class="pubs">{"".join(f'<li><div class="pt"><a href="/{r["slug"]}.html">{esc(r["title"])}</a></div><div class="pm">Nona Dmitrievna Dronova · {r["date"][:4]} · microscopy and pXRF ({r["xrf_date"]}) · full text and original XRF protocols on this site · <a href="{ATLAS}{r["atlas"]}" target="_blank" rel="noopener">Atlas object {r["atlas"][:-5].upper()}</a></div></li>' for r in RESEARCH)}</ul>
+ <ul class="pubs">{"".join(f'<li><div class="pt"><a href="/{r["slug"]}.html">{esc(r["title"])}</a></div><div class="pm">Nona Dmitrievna Dronova · {r["date"][:4]} · microscopy and pXRF ({r["xrf_date"]}) · full text and original XRF protocols on this site · <a href="https://doi.org/{r["doi"]}" target="_blank" rel="noopener">doi:{r["doi"]}</a> · <a href="{ATLAS}{r["atlas"]}" target="_blank" rel="noopener">Atlas object {r["atlas"][:-5].upper()}</a></div></li>' for r in RESEARCH)}</ul>
  <h2>Selected methodological papers</h2>
  <ul class="pubs">{li}</ul>
  <h2>Monographs on Zenodo</h2>
@@ -812,7 +812,7 @@ RESEARCH = [{
     "md": "ru-vase-xrf-2026.md",
     "title": "Microscopic and X-Ray Fluorescence Investigation of a Large Grey-Blue Ru-Type Vase: Chemical Comparisons with Northern Song Ceramics from Qingliangsi and Related Kiln Sites",
     "short": "pXRF Study of a Grey-Blue Ru-Type Vase (RO-SONG-002)",
-    "date": "2026-10-29", "xrf_date": "28 October 2026", "atlas": "ro-song-002.html", "doi": "",
+    "date": "2026-10-29", "xrf_date": "28 October 2026", "atlas": "ro-song-002.html", "doi": "10.5281/zenodo.23768344",
     "desc": "Microscopy and portable XRF (Olympus, 28 October 2026) of a large grey-blue Ru-type vase, compared with Northern Song Ru ware from Qingliangsi and Zhanggongxiang. By Prof. Nona Dronova.",
     "protocols": [
         ("ro-song-002-xrf-g1-body-glaze.jpg", "G1", "Glaze at the widest part of the body"),
