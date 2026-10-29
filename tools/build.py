@@ -514,11 +514,12 @@ def build_atlas():
          "Crackle can be induced deliberately and stained artificially. Only the gradual colour transition of naturally diffused deposits, together with the body and kiln evidence, is diagnostic.",
          "Fig. Overall view of the vase."),
     ]
+    extra = {"RO-SONG-002": ' · <a href="/research/ru-vase-xrf-ro-song-002.html">pXRF research article and protocols (28 Oct 2026)</a>'}
     cards = "".join(f'''<article class="feature">
  <div><img src="/images/{img}" alt="{esc(ttl)} — {esc(ro)}" loading="lazy"><p class="fig">{esc(fig)} {esc(ro)}.</p></div>
  <div><span class="ro">{esc(ro)}</span><h3>{esc(ttl)}</h3><p style="color:var(--muted);font-size:.9rem;margin-top:4px">{esc(obj)}</p>
   <dl><dt>Diagnostic feature</dt><dd>{esc(feat)}</dd><dt>Description</dt><dd>{esc(descr)}</dd><dt>Method of observation</dt><dd>{esc(meth)}</dd><dt>Limits of interpretation</dt><dd>{esc(lim)}</dd></dl>
-  <p style="margin-top:16px"><a href="{ATLAS}{link}" target="_blank" rel="noopener">Full entry in the Atlas ↗</a></p></div>
+  <p style="margin-top:16px"><a href="{ATLAS}{link}" target="_blank" rel="noopener">Full entry in the Atlas ↗</a>{extra.get(ro, "")}</p></div>
 </article>''' for ro, link, img, ttl, obj, feat, descr, meth, lim, fig in feats)
     body = head_band("Diagnostic Atlas of Chinese Porcelain",
                      "A scientific reference system for the authentication of ancient Chinese ceramics and porcelain — not a gallery of photographs, but a structured body of diagnostic evidence.",
@@ -788,6 +789,8 @@ def build_publications():
 <section class="section"><div class="wrap prose">
  <p>Several hundred records are published in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em> (CC BY 4.0). The complete index, grouped by dynasty and linked to the reference objects, is maintained in the Atlas.</p>
  <p><a class="btn btn-gold" href="{ATLAS}publications.html" target="_blank" rel="noopener">Full index of publications ↗</a> <a class="btn" href="{ORCID}" target="_blank" rel="noopener">ORCID profile ↗</a></p>
+ <h2>New research</h2>
+ <ul class="pubs">{"".join(f'<li><div class="pt"><a href="/{r["slug"]}.html">{esc(r["title"])}</a></div><div class="pm">Nona Dmitrievna Dronova · {r["date"][:4]} · microscopy and pXRF ({r["xrf_date"]}) · full text and original XRF protocols on this site · <a href="{ATLAS}{r["atlas"]}" target="_blank" rel="noopener">Atlas object {r["atlas"][:-5].upper()}</a></div></li>' for r in RESEARCH)}</ul>
  <h2>Selected methodological papers</h2>
  <ul class="pubs">{li}</ul>
  <h2>Monographs on Zenodo</h2>
@@ -801,6 +804,68 @@ def build_publications():
          body, crumbs=[("Zenodo Publications", "publications.html")],
          graph=[{"@type": "CollectionPage", "url": BASE + "/publications.html", "name": "Zenodo Publications",
                  "hasPart": [{"@type": "ScholarlyArticle", "name": t, "datePublished": y, "url": f"https://doi.org/10.5281/zenodo.{d}", "author": {"@id": PERSON_ID}} for t, y, d in pubs]}])
+
+
+# ------------------------------------------------------------------ research articles
+RESEARCH = [{
+    "slug": "research/ru-vase-xrf-ro-song-002",
+    "md": "ru-vase-xrf-2026.md",
+    "title": "Microscopic and X-Ray Fluorescence Investigation of a Large Grey-Blue Ru-Type Vase: Chemical Comparisons with Northern Song Ceramics from Qingliangsi and Related Kiln Sites",
+    "short": "pXRF Study of a Grey-Blue Ru-Type Vase (RO-SONG-002)",
+    "date": "2026-10-29", "xrf_date": "28 October 2026", "atlas": "ro-song-002.html", "doi": "",
+    "desc": "Microscopy and portable XRF (Olympus, 28 October 2026) of a large grey-blue Ru-type vase, compared with Northern Song Ru ware from Qingliangsi and Zhanggongxiang. By Prof. Nona Dronova.",
+    "protocols": [
+        ("ro-song-002-xrf-g1-body-glaze.jpg", "G1", "Glaze at the widest part of the body"),
+        ("ro-song-002-xrf-g2-underside-glaze.jpg", "G2", "Glazed underside"),
+        ("ro-song-002-xrf-b1-foot-ring-body.jpg", "B1", "Exposed ceramic body on the foot ring"),
+    ],
+    "pdf": "ro-song-002-xrf-protocols.pdf",
+}]
+
+RESEARCH_CSS = """<style>
+.xrf-protocols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:1.2em 0 1.6em}
+.xrf-protocols figure{margin:0}
+.xrf-protocols img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:top left;border:1px solid var(--border);background:#fff}
+.xrf-protocols figcaption{font-size:.8rem;color:var(--muted);margin-top:6px;line-height:1.45}
+.prose a.uri{overflow-wrap:anywhere;word-break:break-all}
+.prose td[style*="right"],.prose th[style*="right"]{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:700px){.xrf-protocols{grid-template-columns:1fr}}
+</style>
+"""
+
+def build_research():
+    for r in RESEARCH:
+        h = subprocess.run(["pandoc", os.path.join(ROOT, "tools", "content", "research", r["md"]), "-f", "markdown+autolink_bare_uris",
+                            "-t", "html5", "--wrap=none", "--shift-heading-level-by=1"], capture_output=True, text=True, check=True).stdout
+        h = re.sub(r'<a href="(https?://[^"]+)"', r'<a href="\1" target="_blank" rel="noopener"', h)
+        figs = "".join(f'<figure><a href="/research/files/{f}" target="_blank" rel="noopener"><img src="/research/files/{f}" alt="Olympus pXRF protocol {c} — {esc(t)}, {r["xrf_date"]}" loading="lazy" width="1000" height="1000"></a>'
+                       f'<figcaption><strong>{c}</strong> — {esc(t)}. Original Olympus protocol, {r["xrf_date"]}, 45 s. Click to enlarge.</figcaption></figure>' for f, c, t in r["protocols"])
+        block = f'<h3 id="protocols">Original XRF protocols</h3><div class="xrf-protocols">{figs}</div><p><a class="btn btn-small" href="/research/files/{r["pdf"]}" target="_blank" rel="noopener">Download all three protocols (PDF)</a></p>'
+        h = h.replace('<h3 id="major-elemental-composition">', block + '<h3 id="major-elemental-composition">', 1)
+        toc = "".join(f'<li><a href="#{i}">{re.sub("<[^>]+>", "", t)}</a></li>' for i, t in re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', h))
+        doi = (f' · <a href="https://doi.org/{r["doi"]}" target="_blank" rel="noopener">doi:{r["doi"]}</a>' if r["doi"] else " · Zenodo")
+        body = f"""<div class="wrap reader">
+ <aside><h4>Contents</h4><ol>{toc}</ol>
+  <p style="margin-top:16px"><a href="{ATLAS}{r["atlas"]}" target="_blank" rel="noopener">Atlas entry {r["atlas"][:-5].upper()} ↗</a></p>
+  <p style="margin-top:10px"><a href="/research/files/{r["pdf"]}" target="_blank" rel="noopener">XRF protocols (PDF)</a></p>
+  <p style="margin-top:14px"><a class="btn btn-small" href="/index.html">← Back to Home</a></p></aside>
+ <article class="prose">
+  <div class="crumbs"><a href="/index.html">Home</a> / <a href="/publications.html">Publications</a> / <span>Research article</span></div>
+  <span class="eyebrow">Research article · Diagnostic Atlas object {r["atlas"][:-5].upper()}</span>
+  <h1>{esc(r["title"])}</h1>
+  <p class="byline">Professor Nona Dmitrievna Dronova · pXRF examination {r["xrf_date"]}{doi}</p>
+  <p><a class="btn btn-small btn-gold" href="#protocols">Original XRF protocols</a> <a class="btn btn-small" href="{ATLAS}{r["atlas"]}" target="_blank" rel="noopener">Entry in the Diagnostic Atlas ↗</a></p>
+  {h}
+ </article>
+</div>"""
+        url = BASE + "/" + r["slug"] + ".html"
+        g = [{"@type": "ScholarlyArticle", "@id": url + "#article", "headline": r["title"][:110], "name": r["title"], "url": url,
+              "datePublished": r["date"], "inLanguage": "en", "author": {"@id": PERSON_ID},
+              "about": ["Ru ware", "Northern Song ceramics", "X-ray fluorescence", "Archaeometry"]}]
+        meta = "".join(f'<meta name="{k}" content="{esc(v)}">\n' for k, v in [("citation_title", r["title"]), ("citation_author", "Dronova, Nona Dmitrievna"),
+                      ("citation_publication_date", r["date"].replace("-", "/")), ("citation_language", "en"), ("citation_doi", r["doi"])] if v)
+        page(r["slug"] + ".html", r["short"], r["desc"], body, cur="atlas.html", og_type="article",
+             crumbs=[("Publications", "publications.html"), (r["short"], r["slug"] + ".html")], graph=g, extra_head=RESEARCH_CSS + meta)
 
 def build_404():
     body = head_band("Page not found", 'The page you are looking for does not exist. <a href="/index.html">Return to the home page</a>.')
@@ -820,5 +885,5 @@ if __name__ == "__main__":
     prepare_images()
     build_home(); build_porcelain(); build_jade_bronze(); build_atlas(); build_library()
     [ (build_book(b), build_chapters(b)) for b in BOOKS ]; build_author(); build_about()
-    build_literature(); build_publications(); build_404(); build_seo()
+    build_literature(); build_research(); build_publications(); build_404(); build_seo()
     print("\n".join(PAGES))
