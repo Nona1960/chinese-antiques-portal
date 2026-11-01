@@ -25,3 +25,14 @@ Serve the site locally (`python3 -m http.server 8765`) and run `python3 tools/au
 It checks every page at 1366, 768 and 390 px: broken links and anchors, missing images,
 horizontal overflow, cropped photographs, button alignment, Back to Home, titles,
 descriptions, H1 and structured data.
+
+## Atlas of Ancient Jade and Bronze
+
+The full atlas (repo `Nona1960/Atlas-of-Ancient-Jade-and-Bronze-Diagnostics`) is hosted on the portal at
+`/jade-bronze-atlas/`. To bring in a new version of the atlas:
+
+```
+git clone https://github.com/Nona1960/Atlas-of-Ancient-Jade-and-Bronze-Diagnostics /tmp/jb-atlas
+python3 tools/sync_jade_atlas.py /tmp/jb-atlas
+python3 tools/build.py
+```

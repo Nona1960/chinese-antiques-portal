@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Methodology of the Global Diagnostic Atlas of Ancient Chinese Jade and Bronze — Surface Transformation Analysis (STA) and Trace Element Tail Analysis (TETA), developed by Professor Nona Dronova.">
+<title>Methodology — STA &amp; TETA | Atlas of Jade and Bronze Diagnostics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px;
+  --space-6:24px; --space-8:32px; --space-10:40px; --space-16:64px;
+  --text-xs:11px; --text-sm:13px; --text-base:15px; --text-md:16px; --text-lg:18px;
+  --text-xl:22px; --text-2xl:28px; --text-3xl:34px; --text-4xl:44px;
+  --ink: #16211a; --muted: #6f8073; --muted2: #3c4a3f;
+  --border: #d3e0cf; --border2: #e3ecdf;
+  --parchment: #eef4ec; --stone: #f8fbf7;
+  --gold: #9c7a3d; --accent-dark: #dce9d8;
+  --nav-height: 56px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #fbfdfa; font-family: var(--font-body); color: var(--ink); }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+.nav-bar { height: var(--nav-height); border-bottom: 1px solid var(--border); background: #dce9d8; position: sticky; top: 0; z-index: 10; }
+.nav-bar .container { display: flex; align-items: center; height: 100%; gap: 24px; }
+.nav-bar__wordmark { font-family: var(--font-display); font-size: 20px; color: var(--ink); text-decoration: none; font-weight: 500; }
+.nav-bar__wordmark span { color: var(--muted2); font-weight: 300; }
+.nav-bar__items { display: flex; list-style: none; gap: 22px; margin: 0; padding: 0; flex: 1; }
+.nav-bar__item a { text-decoration: none; color: var(--muted2); font-size: 14px; }
+.nav-bar__item.active a { color: var(--ink); font-weight: 700; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+.nav-bar__search { display: flex; gap: 6px; margin-left: auto; }
+.nav-search-field { border: 1px solid var(--border); padding: 6px 10px; font-size: 13px; background: #fff; font-family: var(--font-body); }
+.nav-search-btn { border: 1px solid var(--ink); background: var(--ink); color: #fff; padding: 6px 14px; font-size: 12px; font-family: var(--font-body); cursor: pointer; }
+
+.breadcrumb { font-size: var(--text-sm); color: var(--muted); padding: var(--space-4) 0; }
+.breadcrumb a { color: var(--muted2); text-decoration: none; }
+.breadcrumb__sep { margin: 0 6px; }
+
+.page-header { padding: var(--space-4) 0 var(--space-6); border-bottom: 1px solid var(--border); margin-bottom: var(--space-8); }
+.page-header__eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: var(--space-2); }
+.page-header__title { font-family: var(--font-display); font-size: var(--text-4xl); font-weight: 300; color: var(--ink); line-height: 1.05; margin-bottom: var(--space-3); }
+.page-header__lead { font-family: var(--font-display); font-size: var(--text-xl); font-style: italic; color: var(--muted2); }
+
+.abstract-block { background: var(--parchment); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: var(--space-4); margin-bottom: var(--space-8); max-width: 78ch; }
+.abstract-block__label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-2); }
+.abstract-block__text { font-family: var(--font-body); font-size: var(--text-md); font-weight: 300; line-height: 1.7; color: var(--muted2); }
+
+.method-data { border: 1px solid var(--border); margin-bottom: var(--space-8); max-width: 780px; }
+.method-data__row { display: grid; grid-template-columns: 200px 1fr; border-bottom: 1px solid var(--border2); }
+.method-data__row:last-child { border-bottom: none; }
+.method-data__label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 9px 14px; background: var(--parchment); border-right: 1px solid var(--border2); }
+.method-data__value { font-size: var(--text-sm); color: var(--ink); padding: 9px 14px; line-height: 1.5; }
+
+.section { margin-bottom: var(--space-10); }
+.section__eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-1); }
+.section__title { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 400; color: var(--ink); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border); margin-bottom: var(--space-4); }
+.section p { font-size: var(--text-base); line-height: 1.75; color: var(--muted2); max-width: 72ch; margin: 0 0 var(--space-3); }
+
+.stage-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); margin: var(--space-4) 0 var(--space-6); max-width: 800px; }
+.stage-item { background: var(--stone); display: grid; grid-template-columns: 44px 1fr; }
+.stage-item__num { background: var(--parchment); display: flex; align-items: flex-start; justify-content: center; padding-top: var(--space-3); border-right: 1px solid var(--border2); font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 300; color: var(--border); }
+.stage-item__content { padding: var(--space-3) var(--space-4); }
+.stage-item__title { font-size: var(--text-sm); font-weight: 700; color: var(--muted2); margin-bottom: 4px; }
+.stage-item__desc { font-size: var(--text-sm); color: var(--muted); line-height: 1.6; }
+
+.principle-block { background: var(--accent-dark); border: 1px solid var(--border); padding: var(--space-4); margin: var(--space-4) 0; max-width: 78ch; }
+.principle-block__label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); margin-bottom: var(--space-2); }
+.principle-block__text { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 400; color: var(--ink); line-height: 1.4; font-style: italic; }
+
+.application-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin: var(--space-4) 0; max-width: 800px; }
+.application-cell { background: var(--stone); padding: var(--space-3) var(--space-4); }
+.application-cell__label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-1); padding-bottom: var(--space-1); border-bottom: 1px solid var(--border2); }
+.application-cell__text { font-size: var(--text-sm); color: var(--muted2); line-height: 1.6; margin-top: var(--space-1); }
+
+.certainty-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: var(--space-4); max-width: 900px; }
+.certainty-cell { padding: var(--space-3); text-align: center; }
+.certainty-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; display: inline-block; margin-bottom: 6px; }
+.certainty-desc { font-size: var(--text-xs); color: var(--muted); line-height: 1.5; }
+
+.back-link { display: inline-block; font-family: 'Inter', sans-serif; font-size: 15px; color: #1a1410; text-decoration: none; margin: var(--space-8) 0 var(--space-6); }
+.back-link:hover { text-decoration: underline; }
+
+.footer { border-top: 1px solid var(--border); background: #d9e8d4; padding: var(--space-8) 0 var(--space-5); margin-top: var(--space-8); }
+.footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: var(--space-8); }
+.footer__brand-name { font-family: var(--font-display); font-size: 20px; color: var(--ink); margin: 0 0 var(--space-2); }
+.footer__brand-desc { font-size: var(--text-sm); color: var(--muted2); line-height: 1.6; margin: 0; max-width: 44ch; }
+.footer__col-title { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); margin: 0 0 var(--space-2); }
+.footer__bottom { border-top: 1px solid var(--border); margin-top: var(--space-6); padding-top: var(--space-4); font-size: var(--text-xs); color: var(--muted2); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+@media (max-width: 900px) { .footer__grid { grid-template-columns: 1fr; } .method-data__row { grid-template-columns: 140px 1fr; } .application-grid, .certainty-grid { grid-template-columns: 1fr; } .stage-item { grid-template-columns: 36px 1fr; } }
+
+.method-page { display: grid; grid-template-columns: 1fr 260px; gap: var(--space-8); align-items: start; }
+.method-sidebar { position: sticky; top: calc(var(--nav-height) + var(--space-4)); border: 1px solid var(--border); background: var(--stone); }
+.method-sidebar__header { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border2); background: var(--parchment); }
+.method-sidebar a { display: block; font-size: var(--text-sm); color: var(--muted2); padding: 7px var(--space-3); border-bottom: 1px solid var(--border2); text-decoration: none; }
+.method-sidebar a:last-child { border-bottom: none; }
+.method-sidebar a:hover { background: var(--parchment); color: var(--ink); }
+.method-sidebar a.sub { padding-left: var(--space-5); font-size: 12px; color: var(--muted); }
+.method-sidebar a.chapter { font-weight: 700; color: var(--ink); }
+h3.sub-heading { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 600; color: var(--ink); margin: var(--space-5) 0 var(--space-2); }
+.section ul { font-size: var(--text-base); line-height: 1.75; color: var(--muted2); max-width: 70ch; margin: 0 0 var(--space-3); padding-left: 22px; }
+.section ul li { margin-bottom: 4px; }
+.stage-list-compact { border: 1px solid var(--border); margin: var(--space-4) 0 var(--space-6); max-width: 760px; }
+.stage-row { display: grid; grid-template-columns: 200px 1fr; border-bottom: 1px solid var(--border2); }
+.stage-row:last-child { border-bottom: none; }
+.stage-row__label { font-size: var(--text-sm); font-weight: 700; color: var(--muted2); padding: 8px 12px; background: var(--parchment); border-right: 1px solid var(--border2); }
+.stage-row__value { font-size: var(--text-sm); color: var(--muted2); padding: 8px 12px; }
+@media (max-width: 1000px) { .method-page { grid-template-columns: 1fr; } .method-sidebar { position: static; order: -1; } .stage-row { grid-template-columns: 150px 1fr; } }
+</style>
+<link rel="canonical" href="https://chinese-antiques-portal.vercel.app/jade-bronze-atlas/methodology.html">
+</head>
+<body>
+<div class="portal-bar" style="background:#f6f1e4;border-bottom:1px solid #d9c9a3;font:500 13px/1.4 Inter,system-ui,sans-serif;padding:7px 16px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:center;position:relative;z-index:1000">
+<a href="/" style="color:#7a5a1e;text-decoration:none">&larr; Chinese Antiques &mdash; Scientific Library</a>
+<span style="color:#9a8a6a">Porcelain &middot; Jade &middot; Bronze</span>
+<a href="/jade-bronze.html" style="color:#7a5a1e;text-decoration:none">Bronze &amp; Jade</a>
+<a href="/atlas.html" style="color:#7a5a1e;text-decoration:none">Atlas of Porcelain</a>
+<a href="/library.html" style="color:#7a5a1e;text-decoration:none">Library</a>
+</div>
+
+<header class="nav-bar" role="banner">
+<div class="container">
+<a href="index.html" class="nav-bar__wordmark">Atlas <span>/ Jade &amp; Bronze</span></a>
+<nav aria-label="Main navigation">
+<ul class="nav-bar__items">
+<li class="nav-bar__item"><a href="reference-collection.html">Reference Objects</a></li>
+<li class="nav-bar__item active"><a href="methodology.html">Methodology</a></li>
+<li class="nav-bar__item"><a href="book.html">Book</a></li>
+<li class="nav-bar__item"><a href="publications.html">Publications</a></li>
+<li class="nav-bar__item"><a href="author-profile.html">About</a></li>
+</ul>
+</nav>
+<div class="nav-bar__search">
+<input type="search" class="nav-search-field" placeholder="Search atlas…" aria-label="Search atlas">
+<button class="nav-search-btn" type="button">Search</button>
+</div>
+</div>
+</header>
+
+<main>
+<div class="container">
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="index.html">Atlas</a><span class="breadcrumb__sep">›</span>
+<span>Methodology</span>
+</nav>
+
+<header class="page-header">
+<p class="page-header__eyebrow">MTH-STA-TETA · Analytical Methodology</p>
+<h1 class="page-header__title">Surface Transformation Analysis (STA)<br>&amp; Trace Element Tail Analysis (TETA)</h1>
+<p class="page-header__lead">
+An integrated methodological system for the non-destructive diagnostics of ancient jade and bronze artefacts
+</p>
+<p style="font-size:var(--text-sm); color:var(--muted); margin-top:var(--space-3);">
+Developed by
+<a href="author-profile.html" style="color:var(--muted2); text-decoration:underline;">Professor Nona Dronova</a>
+· Doctor of Technical Sciences · Ph.D. in Geology and Mineralogy
+</p>
+</header>
+
+<div class="abstract-block">
+<p class="abstract-block__label">Method overview</p>
+<p class="abstract-block__text">
+Under the scientific direction of Professor Nona Dronova, an integrated methodological
+system for the non-destructive diagnostics of ancient artefacts has been established,
+based on the analysis of the long-term natural processes of their structural and
+geochemical evolution. The system comprises two material-specific methods — STA for
+jade and TETA for bronze — unified by a single diagnostic philosophy.
+</p>
+</div>
+
+<div class="method-data">
+<div class="method-data__row"><span class="method-data__label">Atlas ID</span><span class="method-data__value">MTH-STA-TETA</span></div>
+<div class="method-data__row"><span class="method-data__label">Full name</span><span class="method-data__value">Surface Transformation Analysis (STA) · Trace Element Tail Analysis (TETA)</span></div>
+<div class="method-data__row"><span class="method-data__label">Developer</span><span class="method-data__value">Professor Nona Dronova</span></div>
+<div class="method-data__row"><span class="method-data__label">Category</span><span class="method-data__value">Non-destructive diagnostics · Structural, mineralogical and geochemical analysis</span></div>
+<div class="method-data__row"><span class="method-data__label">Applied to</span><span class="method-data__value">STA — ancient jade · TETA — ancient bronze</span></div>
+<div class="method-data__row"><span class="method-data__label">Destructive?</span><span class="method-data__value">Non-destructive · No sampling required</span></div>
+</div>
+
+<div class="method-page">
+<article>
+
+<section class="section" id="ch1">
+<p class="section__eyebrow">Chapter 1</p>
+<h2 class="section__title">Methodology of Diagnostics of Ancient Chinese Jade</h2>
+
+<h3 class="sub-heading" id="sta-1-1">1.1 Theoretical Foundations of Surface Transformation Analysis (STA)</h3>
+<p>
+Authenticating ancient Chinese jade artefacts is one of the most difficult tasks in
+contemporary museum, archaeological, and collecting practice. Despite the wide use of
+mineralogical, spectroscopic, and chemical-analytical methods, a large share of research
+still focuses on determining the mineral composition of the jade, its textural features,
+and the source of the raw material. These characteristics alone, however, cannot reliably
+establish the antiquity of an object's manufacture.
+</p>
+<p>
+The use of genuinely ancient jade raw material in modern fakes, the re-working of
+archaeological blanks, and the artificial ageing of surfaces all significantly limit the
+diagnostic value of mineral-composition analysis alone. Because of this, the true object
+of study becomes not the mineral itself, but the patterns of natural transformation of its
+surface, occurring over the object's long residence in an archaeological environment.
+</p>
+<p>
+The Surface Transformation Analysis (STA) method is based on a fundamentally different
+approach to the study of ancient jade. Its focus is the artefact's surface layer, treated
+as an independent natural-historical system that changes progressively under the physical,
+chemical, mineralogical, and biological processes of its surrounding environment.
+</p>
+<p>
+After an object is made, its surface begins to interact with groundwater, dissolved
+mineral components, weathering products, microorganisms, and the soil's gas environment.
+These processes continue for centuries or millennia and lead to the gradual formation of
+a new surface layer, substantially different in structure from the original surface that
+existed immediately after polishing.
+</p>
+<p>
+It is precisely this secondary layer that carries the most valuable information about the
+artefact's history. During prolonged archaeological exposure, secondary minerals form on
+the surface; selective dissolution of individual areas occurs; microporosity develops; the
+character of the microrelief changes; zones of recrystallisation and local iron and
+manganese accumulations arise; and complex spatial structures form, reflecting the
+successive stages of the material's natural ageing.
+</p>
+<p>
+Unlike artificially created patina or modern ageing-imitation technologies, natural
+surface transformation is the result of extremely slow geochemical processes occurring
+under conditions that cannot be fully reproduced over a short period of time. This is
+precisely why the study of secondary surface changes carries far greater diagnostic value
+than an assessment of chemical composition or decorative features alone.
+</p>
+<p>
+The STA method treats the surface of ancient jade as an archive of the object's natural
+geochemical history. Each stage of the mineral's interaction with its environment leaves
+characteristic microscopic traces, the totality of which allows the duration of the
+processes to be reconstructed, the sequence of secondary-change formation to be
+determined, and the probability of the object's archaeological origin to be assessed.
+</p>
+<p>
+Within the method, attention is directed not at any single feature but at the analysis of
+the whole complex of interrelated surface transformations. This approach substantially
+reduces the likelihood of misinterpreting individual diagnostic features and allows an
+object's antiquity to be assessed on the basis of the regularities of the natural
+evolution of its surface layer.
+</p>
+<div class="principle-block">
+<p class="principle-block__label">Core definition</p>
+<p class="principle-block__text">
+Surface Transformation Analysis (STA) is not a single analytical technique but a
+comprehensive scientific methodology for the non-destructive diagnosis of ancient jade
+artefacts, based on the microscopic study of the long-term transformation of their
+surfaces — distinguishing genuine ancient objects from modern productions and
+artificial imitations.
+</p>
+</div>
+
+<h3 class="sub-heading" id="sta-1-2">1.2 Mineralogical Features of Nephrite as an Object of STA Diagnosis</h3>
+<p>
+The effectiveness of STA is determined by the unique mineralogical and structural
+features of nephrite. Unlike most ornamental stones, nephrite is not a single crystal but
+a natural polymineral aggregate composed of extremely fine, interwoven amphibole fibres.
+In ancient Chinese nephrite, the principal minerals are tremolite and actinolite, forming
+a dense spatial network of mutually interlaced microfibres.
+</p>
+<p>
+It is precisely this fibrous organisation that gives nephrite its exceptional mechanical
+strength while simultaneously creating a complex system of micropores, inter-fibre
+contacts, capillary channels, and crystal-structure defects. After an object has been
+worked — by sawing, drilling, carving, grinding, and especially polishing — some fibres
+are cut through, exposing numerous crystal end-faces. These areas are considerably more
+chemically reactive than the natural surfaces of unworked stone.
+</p>
+<p>
+Polishing does not fully eliminate the surface microrelief. At the microscopic level,
+traces of working remain — exposed fibre ends, zones of plastic deformation, microcracks,
+and areas of localised disruption of the crystal structure. It is precisely these
+microscopic features that become the primary centres of the jade's subsequent interaction
+with the archaeological environment.
+</p>
+<p>
+Once an object is placed in the ground, a prolonged process of physico-chemical
+interaction between its surface and the surrounding environment begins. Soil solutions,
+containing dissolved compounds of iron, manganese, silicon, calcium, aluminium and other
+elements, gradually penetrate the surface layer through the system of micropores and
+inter-fibre spaces. The rate of penetration is determined by fibre orientation, the degree
+of their exposure after working, the porosity of individual areas, and burial conditions.
+</p>
+<p>
+The heterogeneity of the ancient jade surface plays a particular role. Areas subjected to
+intensive mechanical working have a considerably greater specific surface area than
+natural fractures or unworked zones. This produces differing rates of adsorption,
+sorption, and diffusion of chemical components, so that secondary minerals are
+distributed unevenly, forming a characteristic spatial zonation.
+</p>
+<p>
+Studies of archaeological jade show that the maximum concentration of secondary iron
+formations is usually observed in areas with a high density of exposed fibre ends, in
+zones of ancient carving, around drilled holes, along polished facets, and in microcracks
+that arose even during the object's original manufacture. Such a distribution is a
+natural consequence of nephrite's internal structure and does not follow any decorative
+logic — a point that clearly distinguishes natural archaeological transformation from
+modern methods of artificial colouring.
+</p>
+<p>
+Over centuries of interaction with the archaeological environment, the original surface
+gradually turns into a complex, multi-component system that includes the preserved
+primary mineral, products of its partial dissolution, secondary iron and manganese
+formations, and zones of microcrystallisation, leaching, and recrystallisation. Each of
+these components reflects a particular stage of the surface's natural evolution and
+carries its own diagnostic information.
+</p>
+<p>
+Within STA, the jade surface is treated as a dynamic mineralogical system that has
+continuously changed throughout the object's entire archaeological history. The
+principal object of study therefore becomes not the chemical composition of the nephrite
+as such, but the sequence in which secondary surface structures formed as a result of
+prolonged geochemical processes.
+</p>
+<p>
+Thus, the mineralogical structure of nephrite is not only the basis of its physical
+properties but also the principal factor determining the character of the long-term
+archaeological transformation of its surface. It is precisely this regular relationship
+between the mineral's internal structure and the evolution of its surface layer that
+forms the foundation of STA.
+</p>
+
+<h3 class="sub-heading" id="sta-1-3">1.3 Physico-Chemical Mechanisms of Archaeological Surface Transformation</h3>
+<p>
+The long-term transformation of the nephrite surface under archaeological burial
+conditions is a complex set of interrelated physico-chemical, geochemical, and
+biogeochemical processes. Within STA, these processes are treated as the fundamental
+mechanism by which the diagnostically significant surface layer is formed.
+</p>
+
+<h3 class="sub-heading" id="sta-1-3-1" style="font-size:var(--text-md);">1.3.1 General Scheme of Surface Evolution</h3>
+<p>
+After a nephrite artefact is made and subsequently enters the soil environment, a gradual
+restructuring of the mineral's surface zone begins. Initially, this restructuring is
+local in character and is linked to working defects — microcracks, exposed fibre ends,
+zones of plastic deformation, and disruptions of the crystal packing. Over time, the
+system of processes becomes stable and includes:
+</p>
+<ul>
+<li>diffusion of dissolved ions from soil solutions;</li>
+<li>adsorption of ions on reactive surfaces;</li>
+<li>chemical interaction with the components of the nephrite;</li>
+<li>precipitation of secondary minerals;</li>
+<li>partial dissolution of the most reactive areas.</li>
+</ul>
+
+<h3 class="sub-heading" id="sta-1-3-2" style="font-size:var(--text-md);">1.3.2 Migration of Iron and Manganese</h3>
+<p>
+A key role in the formation of diagnostically significant surface structures is played by
+the migration of iron and manganese compounds. In natural waters, these elements occur in
+dissolved forms, including ionic and complex compounds stable under weakly acidic and
+neutral conditions.
+</p>
+<p>
+As soil solutions penetrate the jade's surface layer, Fe<sup>2+</sup> and Fe<sup>3+</sup>
+gradually accumulate in zones of increased permeability. As the redox potential of the
+environment changes, iron undergoes successive oxidation–reduction transformations,
+leading to the formation of stable secondary phases such as hematite (Fe₂O₃), goethite
+(FeOOH), and lepidocrocite (γ-FeOOH).
+</p>
+<p>
+Manganese participates in analogous processes, forming oxide and hydroxide phases that
+often coexist with the iron formations and intensify the heterogeneity of the surface
+layer's colouration.
+</p>
+
+<h3 class="sub-heading" id="sta-1-3-3" style="font-size:var(--text-md);">1.3.3 The Role of Nephrite Microstructure in Selective Mineralisation</h3>
+<p>
+The distribution pattern of secondary minerals is governed by nephrite's microstructure.
+The fibrous nature of the tremolite–actinolite aggregate produces a pronounced anisotropy
+in the physico-chemical properties of the surface. The most reactive zones are:
+</p>
+<ul>
+<li>fibre end-faces;</li>
+<li>areas subjected to mechanical working;</li>
+<li>microcracks and cleavage defects;</li>
+<li>zones of increased porosity formed during carving and grinding.</li>
+</ul>
+<p>
+These are precisely the areas that show the greatest sorption capacity and become centres
+of selective accumulation of iron and manganese compounds. The result is a characteristic
+spatial heterogeneity of colouration, unrelated to any external artistic or technological
+cause.
+</p>
+
+<h3 class="sub-heading" id="sta-1-3-4" style="font-size:var(--text-md);">1.3.4 Biogeochemical Factors</h3>
+<p>
+An important element of STA is accounting for biogeochemical processes. Soil
+microorganisms participate in the oxidation and reduction of iron and manganese, altering
+their valence state and, consequently, their solubility. Microbiological activity
+contributes to:
+</p>
+<ul>
+<li>accelerating the oxidation of Fe<sup>2+</sup> to Fe<sup>3+</sup>;</li>
+<li>the formation of local zones of hydroxide precipitation;</li>
+<li>the stabilisation of finely dispersed mineral phases on the jade surface.</li>
+</ul>
+<p>
+The biological factor thus acts as a catalyst for the geochemical evolution of the
+surface layer, intensifying the complexity and multi-stage character of the
+transformation processes.
+</p>
+
+<h3 class="sub-heading" id="sta-1-3-5" style="font-size:var(--text-md);">1.3.5 Stages in the Formation of the Secondary Surface Layer</h3>
+<p>Within STA, the following provisional stages of surface transformation are distinguished:</p>
+<div class="stage-list-compact">
+<div class="stage-row"><span class="stage-row__label">Stage I — Surface activation</span><span class="stage-row__value">Formation of zones of increased reactivity as a result of mechanical working and micro-damage.</span></div>
+<div class="stage-row"><span class="stage-row__label">Stage II — Ionic infiltration</span><span class="stage-row__value">Penetration of dissolved components of soil solutions into the surface layer.</span></div>
+<div class="stage-row"><span class="stage-row__label">Stage III — Primary mineralisation</span><span class="stage-row__value">Formation of amorphous and weakly crystalline iron and manganese compounds.</span></div>
+<div class="stage-row"><span class="stage-row__label">Stage IV — Crystallisation of secondary phases</span><span class="stage-row__value">Formation of stable minerals (hematite, goethite, lepidocrocite).</span></div>
+<div class="stage-row"><span class="stage-row__label">Stage V — Structural stabilisation</span><span class="stage-row__value">Establishment of a stable equilibrium between the primary and secondary mineral phases of the surface.</span></div>
+</div>
+
+<h3 class="sub-heading" id="sta-1-3-6" style="font-size:var(--text-md);">1.3.6 Significance for the STA Method</h3>
+<p>
+The totality of the processes described above forms a complex, multi-layered system of
+surface transformations, which is the key object of analysis in STA. It is of fundamental
+importance that these processes:
+</p>
+<ul>
+<li>occur over a long period of time;</li>
+<li>are multi-staged in character;</li>
+<li>depend on the local microstructure of the material;</li>
+<li>cannot be precisely reproduced under artificial conditions over a short time.</li>
+</ul>
+<p>
+For this reason, the observed microstructure of the surface layer can be regarded as a
+reliable indicator of nephrite's prolonged presence in an archaeological environment, and
+serves as the basis for the scientific diagnosis of the authenticity of ancient
+artefacts.
+</p>
+
+<h3 class="sub-heading" id="sta-1-4">1.4 Microscopic Diagnostic Criteria of Jade Antiquity (STA Criteria)</h3>
+<p>
+STA is based on identifying a set of microscopic features that form as a result of
+nephrite's prolonged interaction with the archaeological environment. Unlike
+visual-stylistic analysis, STA relies on the observation of structures inaccessible to
+the naked eye, recorded only at microscopic scale. The diagnostic value of any single
+feature is limited; however, their stable combinations and spatial regularities form a
+reliable basis for establishing an artefact's antiquity.
+</p>
+
+<h3 class="sub-heading" id="sta-1-4-1" style="font-size:var(--text-md);">1.4.1 Secondary Iron-Mineral Formations</h3>
+<p>One of the most significant diagnostic features is the local accumulation of secondary iron minerals. Under the microscope, these appear as:</p>
+<ul>
+<li>finely dispersed hematite aggregates;</li>
+<li>platy and needle-like lepidocrocite crystals;</li>
+<li>amorphous iron hydroxide films;</li>
+<li>zones of gradual transition between the original jade surface and the secondary mineralisation.</li>
+</ul>
+<p>A characteristic feature is the <strong>unevenness of distribution</strong>, caused by the structural anisotropy of the nephrite. Secondary formations concentrate predominantly in zones of exposed fibres, microcracks, and areas of ancient mechanical working.</p>
+
+<h3 class="sub-heading" id="sta-1-4-2" style="font-size:var(--text-md);">1.4.2 Pseudo-Reticulate and Linear Structural Formations</h3>
+<p>Ancient jade is characterised by the formation of complex spatial structures, including:</p>
+<ul>
+<li>pseudo-reticulate (net-like) iron formations;</li>
+<li>linear chains of mineral inclusions;</li>
+<li>branching hydroxide micronetworks;</li>
+<li>structures oriented along the fibrous texture of the nephrite.</li>
+</ul>
+<p>These formations reflect the directed migration of iron and manganese ions along microstructural channels and result from long-term diffusion and crystallisation processes.</p>
+
+<h3 class="sub-heading" id="sta-1-4-3" style="font-size:var(--text-md);">1.4.3 Zones of Leaching and Structural Depletion</h3>
+<p>A characteristic feature of nephrite's prolonged presence in the archaeological environment is the presence of zones of partial leaching, manifested as:</p>
+<ul>
+<li>localised reduction in optical density;</li>
+<li>microporous areas with weakened structure;</li>
+<li>areas of partial loss of the original mineralogical cohesion.</li>
+</ul>
+<p>These zones frequently border areas of intensive secondary mineralisation, forming contrasting microchemical gradients.</p>
+
+<h3 class="sub-heading" id="sta-1-4-4" style="font-size:var(--text-md);">1.4.4 Microrelief Associated with Prolonged Surface Transformation</h3>
+<p>Under the microscope, ancient jade surfaces show a complex relief that cannot be explained by working technique alone. It includes:</p>
+<ul>
+<li>smoothed but structurally heterogeneous zones;</li>
+<li>micro-stepped transitions between layers of transformation;</li>
+<li>localised areas of recrystallisation;</li>
+<li>areas of secondary "re-melting" of the microstructure.</li>
+</ul>
+<p>Importantly, this relief has no regular character and does not follow instrumental symmetry — a feature that distinguishes it from modern mechanical treatment.</p>
+
+<h3 class="sub-heading" id="sta-1-4-5" style="font-size:var(--text-md);">1.4.5 Spatial Consistency of Features</h3>
+<p>The key criterion of STA is not the presence of individual features but their <strong>spatial consistency</strong>. Ancient jade is characterised by an interconnected system in which:</p>
+<ul>
+<li>zones of secondary mineralisation coincide with areas of mechanical working;</li>
+<li>iron accumulations correlate with microcracks and fibre end-faces;</li>
+<li>leaching and mineralisation form conjugate structures.</li>
+</ul>
+<p>This consistency reflects the natural evolution of the surface and results from the long-term geochemical development of the system.</p>
+
+<h3 class="sub-heading" id="sta-1-4-6" style="font-size:var(--text-md);">1.4.6 Diagnostic Significance of STA Criteria</h3>
+<p>
+The set of microscopic features described above forms the basis of the diagnostic
+conclusion within STA. It is of fundamental importance that the assessment of
+authenticity is not based on isolated observations, but is built on an analysis of the
+entire system of surface transformations as a single process.
+</p>
+<p>Artificial imitations typically show:</p>
+<ul>
+<li>local inconsistency of features;</li>
+<li>absence of deep structural evolution;</li>
+<li>superficial colouration without staged formation.</li>
+</ul>
+<p>
+By contrast, genuine ancient jade artefacts are characterised by a multi-level, spatially
+connected, and morphologically complex system of surface transformation, formed over a
+long period under natural geochemical conditions.
+</p>
+<p>
+Thus, the microscopic STA criteria constitute the principal tool for identifying the
+antiquity of nephrite and allow the transition from subjective visual analysis to
+objective structural diagnosis.
+</p>
+</section>
+
+<section class="section" id="ch2">
+<p class="section__eyebrow">Chapter 2</p>
+<h2 class="section__title">Methodology of Diagnostics of Ancient Chinese Bronzes — Trace Element Tail Analysis (TETA)</h2>
+
+<h3 class="sub-heading" id="teta-2-1">2.1 Theoretical Foundations of TETA</h3>
+<p>
+Trace Element Tail Analysis (TETA) is a non-destructive geochemical approach to
+diagnosing ancient Chinese bronzes, based on analysing the distribution of trace-element
+impurities and their "tail" concentration profiles within the structure of the alloy.
+</p>
+<p>
+Unlike traditional metallographic and spectral diagnostics, which focus on the averaged
+composition of the metal, TETA treats bronze as the product of processing natural ores
+that retain complex and heterogeneous geochemical signatures. These signatures do not
+disappear entirely during smelting but are redistributed as stable trace-element
+associations.
+</p>
+<div class="principle-block">
+<p class="principle-block__label">Core proposition</p>
+<p class="principle-block__text">
+Ancient bronze is not a "pure alloy" in the modern technological sense, but a hereditary
+ore-metallurgical system in which traces of the original mineral raw material are
+preserved.
+</p>
+</div>
+
+<h3 class="sub-heading" id="teta-2-2">2.2 The Geochemical Nature of Ancient Chinese Bronzes</h3>
+<p>
+Ancient Chinese bronzes were formed predominantly through the processing of complex
+polymetallic ores containing not only copper and tin but also substantial amounts of
+associated elements, including lead, antimony, arsenic, iron, nickel, and rare trace
+elements.
+</p>
+<p>
+A feature of early metallurgical technology was the absence of deep refining of the raw
+material, which led to a wide range of impurity elements being retained in the alloy. The
+result was a complex structure in which the principal metallic matrix coexists with
+stable geochemical "traces" of the original minerals. These traces manifest not only in
+the bulk composition of the metal but also in the micro-heterogeneities of element
+distribution, forming what are termed <strong>trace element tails</strong>.
+</p>
+
+<h3 class="sub-heading" id="teta-2-3">2.3 The Concept of Trace Element "Tails" and Their Diagnostic Significance</h3>
+<p>
+Within TETA, "tails" of trace elements are understood as stable, low-concentration
+distributions of impurities that retain a link to their original ore associations.
+Unlike the uniformly distributed elements of modern refined metal, ancient bronzes show:
+</p>
+<ul>
+<li>local zones of elevated antimony and arsenic concentration;</li>
+<li>associations of copper with iron and nickel;</li>
+<li>uneven distribution of lead within the matrix;</li>
+<li>stable correlations between elements characteristic of specific ore types.</li>
+</ul>
+<p>These "tails" result from the incomplete breakdown of the original raw material's mineralogical structure and reflect the geological history of the ore used in smelting.</p>
+
+<h3 class="sub-heading" id="teta-2-4">2.4 The Relationship Between Trace Element Composition and Patina Formation</h3>
+<p>
+Of particular importance in TETA is the analysis of the relationship between the bulk
+composition of the alloy and the chemical-mineralogical composition of the patina. The
+patina of ancient bronzes is treated not as an external corrosion shell, but as a
+<strong>continuation of the alloy's geochemical system</strong>, forming as a result of
+the metal's prolonged interaction with its environment. During corrosion, the following
+occur:
+</p>
+<ul>
+<li>selective leaching of copper;</li>
+<li>relative enrichment of the surface layer in tin and lead;</li>
+<li>migration of trace elements into the oxidation zone;</li>
+<li>fixation of antimony, arsenic, and iron in the secondary minerals of the patina.</li>
+</ul>
+<p>The patina thus becomes a carrier of redistributed geochemical information originally embedded in the structure of the alloy.</p>
+
+<h3 class="sub-heading" id="teta-2-5">2.5 The Significance of TETA in Diagnosing Ancient Bronzes</h3>
+<p>
+TETA allows an ancient bronze to be treated as an integrated "ore — alloy — patina"
+system, in which each stage retains interrelated geochemical traces. The key diagnostic
+principle is not the absolute content of elements, but their:
+</p>
+<ul>
+<li>associative relationships;</li>
+<li>distribution within micro-volumes;</li>
+<li>consistency between alloy and patina;</li>
+<li>the presence of stable ore signatures.</li>
+</ul>
+<p>It is precisely this systemic structure that allows ancient bronzes, formed from natural ores with minimal refining, to be distinguished from modern imitations made from refined metals with artificially created patina.</p>
+
+<h3 class="sub-heading" id="teta-2-6">2.6 Microscopic and Analytical Criteria of Bronze Authenticity (TETA Criteria)</h3>
+<p>
+TETA is based on identifying a set of microanalytical features reflecting the ore origin
+of the alloy and the long-term geochemical evolution of the "metal — environment" system.
+Authentication is carried out not through single compositional parameters, but through
+stable elemental associations, their distribution, and their relationship to corrosion
+products.
+</p>
+
+<h3 class="sub-heading" id="teta-2-6-1" style="font-size:var(--text-md);">2.6.1 Trace Element Associations as the Basis of Diagnosis</h3>
+<p>Ancient Chinese bronzes are characterised by stable geochemical associations reflecting the original ore nature of the raw material. The most significant combinations are:</p>
+<ul>
+<li>Cu–Sn–Pb as the principal metallurgical system;</li>
+<li>Cu–As–Sb as an indicator of polymetallic ores;</li>
+<li>Fe–Ni–Co as trace ore components;</li>
+<li>localised inclusions of rare elements linked to natural mineralisation.</li>
+</ul>
+<p>An important diagnostic feature is not only the presence of these elements, but their <strong>joint spatial distribution</strong>, which preserves correlations characteristic of the original minerals.</p>
+
+<h3 class="sub-heading" id="teta-2-6-2" style="font-size:var(--text-md);">2.6.2 The Character of Trace Element "Tails"</h3>
+<p>Within TETA, "tails" are understood as low-concentration zones of element distribution that retain a link to ore genetics. Ancient bronzes are characterised by:</p>
+<ul>
+<li>a smooth decay in element concentration from inclusions toward the matrix;</li>
+<li>the presence of micro-zones enriched in antimony and arsenic;</li>
+<li>uneven distribution of lead in intercrystalline regions;</li>
+<li>the preservation of localised ore clusters.</li>
+</ul>
+<p>Modern alloys show the opposite pattern — a high degree of homogenisation and the absence of stable trace-element gradients.</p>
+
+<h3 class="sub-heading" id="teta-2-6-3" style="font-size:var(--text-md);">2.6.3 The Structure of Corrosion Layers and Their Relationship to the Alloy</h3>
+<p>The patina of ancient bronzes shows a close chemical and structural relationship to the underlying alloy. Microscopic analysis reveals:</p>
+<ul>
+<li>zones enriched in tin and lead within the surface layers;</li>
+<li>inclusions of copper oxides and sulphates containing impurity elements;</li>
+<li>localised fixation of antimony and arsenic in corrosion products;</li>
+<li>a layered structure with transitional mineralisation zones.</li>
+</ul>
+<p>The key criterion is the <strong>continuity of the transition between the metallic matrix and the patina</strong>, reflecting a long, natural process of oxidation.</p>
+
+<h3 class="sub-heading" id="teta-2-6-4" style="font-size:var(--text-md);">2.6.4 The Morphology of Secondary Patina Minerals</h3>
+<p>Within TETA, particular importance is given to analysing the morphology of corrosion formations. Ancient bronzes are characterised by:</p>
+<ul>
+<li>dense crystalline aggregates of copper oxides;</li>
+<li>micro-layered structures with alternating phases;</li>
+<li>inclusions of complex copper, tin, and lead minerals;</li>
+<li>heterogeneous zones of recrystallisation.</li>
+</ul>
+<p>Artificial patinas, by contrast, are characterised by a superficial overlay of phases without deep structural integration.</p>
+
+<h3 class="sub-heading" id="teta-2-6-5" style="font-size:var(--text-md);">2.6.5 The Criterion of Structural Consistency in the "Alloy — Patina" System</h3>
+<p>The most important diagnostic criterion of TETA is the presence of <strong>structural consistency between the composition of the alloy and the composition of the patina</strong>. Ancient bronzes show:</p>
+<ul>
+<li>coincidence of trace-element associations in the metal and in the patina;</li>
+<li>transition of elements from the matrix into the corrosion layers;</li>
+<li>preservation of ore signatures in the oxidation products;</li>
+<li>spatial correlation of enrichment zones.</li>
+</ul>
+<p>In modern imitations, this consistency is absent: the patina forms as an external coating unrelated to the material's internal geochemistry.</p>
+
+<h3 class="sub-heading" id="teta-2-6-6" style="font-size:var(--text-md);">2.6.6 The Diagnostic Significance of TETA Criteria</h3>
+<p>The set of microanalytical features used in TETA allows an ancient bronze to be treated as a single, evolving geochemical system. Diagnosis is based on the following principles:</p>
+<ul>
+<li>priority of associative analysis over absolute concentrations;</li>
+<li>accounting for the spatial organisation of trace elements;</li>
+<li>analysis of the relationship between metal and patina as a single system;</li>
+<li>identification of ore signatures as stable genetic markers.</li>
+</ul>
+<p>Thus, TETA criteria provide a reliable means of distinguishing ancient bronzes formed from natural ore systems from modern items produced from refined metals with artificially created surfaces.</p>
+
+<h3 class="sub-heading" id="teta-2-7">2.7 Practical Protocol for Applying TETA in Laboratory and Museum Diagnostics</h3>
+<p>
+TETA is implemented as a sequential system of non-destructive and microanalytical
+investigation of ancient Chinese bronzes. Its practical application is based on combining
+visual microscopic analysis, localised elemental mapping, and the interpretation of
+correlations between the alloy and its corrosion products.
+</p>
+
+<h3 class="sub-heading" id="teta-2-7-1" style="font-size:var(--text-md);">2.7.1 General Scheme of the Analytical Study</h3>
+<p>The application of TETA involves several sequential stages:</p>
+<div class="stage-list-compact">
+<div class="stage-row"><span class="stage-row__label">1. Macroscopic assessment</span><span class="stage-row__value">Recording the overall condition of the surface, the character of the patina, and the corrosion zones.</span></div>
+<div class="stage-row"><span class="stage-row__label">2. Microscopic examination</span><span class="stage-row__value">Studying the structure of the patina, identifying zones of heterogeneity and transitional areas.</span></div>
+<div class="stage-row"><span class="stage-row__label">3. Selection of analysis zones</span><span class="stage-row__value">Areas with well-developed patina, exposed metal, transitional corrosion layers, or visible inclusions and defects.</span></div>
+<div class="stage-row"><span class="stage-row__label">4. Microanalytical study</span><span class="stage-row__value">SEM-EDS, X-ray fluorescence analysis, or other methods of localised elemental analysis.</span></div>
+</div>
+
+<h3 class="sub-heading" id="teta-2-7-2" style="font-size:var(--text-md);">2.7.2 Principles for Selecting Analytical Zones</h3>
+<p>A key stage of TETA is the correct selection of analysis zones, since it is precisely the spatial heterogeneity of the "alloy — patina" system that carries the principal diagnostic information. Priority is given to:</p>
+<ul>
+<li>metal/patina boundaries;</li>
+<li>cracks in the corrosion layer;</li>
+<li>areas of multi-layered patina;</li>
+<li>localised inclusions of secondary minerals;</li>
+<li>zones with visible colour and textural differentiation.</li>
+</ul>
+<p>It is not admissible to limit the study to homogeneous surface areas alone, as these do not reflect the object's geochemical structure.</p>
+
+<h3 class="sub-heading" id="teta-2-7-3" style="font-size:var(--text-md);">2.7.3 Microanalytical Interpretation of Data</h3>
+<p>When interpreting analytical results, primary attention is given not to the absolute values of elements, but to their <strong>systemic interrelationships</strong>. Within TETA, the following are analysed:</p>
+<ul>
+<li>correlations of Cu–Sn–Pb as the basic metallurgical system;</li>
+<li>the distribution of As and Sb as indicators of ore origin;</li>
+<li>localised concentrations of Fe, Ni, and Co as trace markers;</li>
+<li>the coincidence of trace-element profiles in the metal and in the patina.</li>
+</ul>
+<p>Particular importance is given to identifying <strong>continuous transitional zones</strong>, in which the gradual migration of elements from the metallic matrix into the corrosion layers is observed.</p>
+
+<h3 class="sub-heading" id="teta-2-7-4" style="font-size:var(--text-md);">2.7.4 Interpreting the Patina as a Geochemical System</h3>
+<p>In TETA, the patina is treated not as an external coating, but as an integral part of the alloy's evolution. Interpretation takes into account:</p>
+<ul>
+<li>the layering of corrosion products;</li>
+<li>the degree to which alloy elements are incorporated into mineralogical phases;</li>
+<li>the presence of relict ore signatures;</li>
+<li>the structural relationship between microrelief and chemical composition.</li>
+</ul>
+<p>Particular attention is paid to signs of deep-seated patina formation, which cannot be reproduced by superficial chemical treatments.</p>
+
+<h3 class="sub-heading" id="teta-2-7-5" style="font-size:var(--text-md);">2.7.5 Reliability Criteria for Results</h3>
+<p>Results obtained within TETA are considered reliable when the following conditions are met:</p>
+<ul>
+<li>the presence of consistent trace-element associations in the metal and in the patina;</li>
+<li>the identification of gradient transitions in element concentrations;</li>
+<li>the fixation of ore-derived trace-element "tails";</li>
+<li>structural heterogeneity consistent with natural corrosion processes;</li>
+<li>the absence of signs of superficially applied artificial patina.</li>
+</ul>
+<p>Failure to meet even one of these systemic criteria requires the interpretation of results to be reconsidered.</p>
+
+<h3 class="sub-heading" id="teta-2-7-6" style="font-size:var(--text-md);">2.7.6 The Place of TETA in Comprehensive Expert Examination</h3>
+<p>TETA does not replace traditional analytical methods but supplements them, forming an integrated approach to the diagnosis of ancient bronzes. In comprehensive expert examination, TETA is used together with:</p>
+<ul>
+<li>metallographic structural analysis;</li>
+<li>X-ray fluorescence spectroscopy;</li>
+<li>isotopic studies (where available);</li>
+<li>microscopic analysis of the patina.</li>
+</ul>
+<p>This multi-level approach allows an ancient bronze to be treated as a complex geochemical system, encompassing the stages of ore formation, metallurgical processing, and long-term post-depositional transformation.</p>
+
+<div class="principle-block">
+<p class="principle-block__label">Section conclusion</p>
+<p class="principle-block__text">
+The practical implementation of TETA allows the transition from descriptive analysis of
+bronzes to a systemic geochemical reconstruction of their origin — forming the basis for
+a scientifically grounded distinction between ancient objects and modern imitations.
+</p>
+</div>
+</section>
+
+</article>
+<aside class="method-sidebar" aria-label="On this page">
+<p class="method-sidebar__header">On this page</p>
+<a href="#ch1" class="chapter">Chapter 1 — Jade (STA)</a>
+<a href="#sta-1-1" class="sub">1.1 Theoretical foundations</a>
+<a href="#sta-1-2" class="sub">1.2 Mineralogical features</a>
+<a href="#sta-1-3" class="sub">1.3 Physico-chemical mechanisms</a>
+<a href="#sta-1-4" class="sub">1.4 Diagnostic criteria (STA)</a>
+<a href="#ch2" class="chapter">Chapter 2 — Bronze (TETA)</a>
+<a href="#teta-2-1" class="sub">2.1 Theoretical foundations</a>
+<a href="#teta-2-2" class="sub">2.2 Geochemical nature</a>
+<a href="#teta-2-3" class="sub">2.3 Trace element "tails"</a>
+<a href="#teta-2-4" class="sub">2.4 Trace elements &amp; patina</a>
+<a href="#teta-2-5" class="sub">2.5 Significance of TETA</a>
+<a href="#teta-2-6" class="sub">2.6 Diagnostic criteria (TETA)</a>
+<a href="#teta-2-7" class="sub">2.7 Practical protocol</a>
+<a href="#principle" class="chapter">Unified Principle</a>
+<a href="#applications" class="chapter">Applications</a>
+<a href="#significance" class="chapter">Significance</a>
+</aside>
+</div><!-- /method-page -->
+
+<section class="section" id="principle">
+<p class="section__eyebrow">Section 3</p>
+<h2 class="section__title">The Unified Diagnostic Principle</h2>
+<p>
+Both methodologies treat the ancient artefact as a single system of
+"material — environment — time." Authenticity is determined not by external
+appearance, but by stable structural and geochemical changes formed over long
+historical periods.
+</p>
+<div class="principle-block">
+<p class="principle-block__label">Founding principle</p>
+<p class="principle-block__text">
+Authenticity is determined not by external appearance, but by stable
+structural and geochemical traces of prolonged interaction between the
+material and its environment.
+</p>
+</div>
+<p>
+The integration of STA and TETA constitutes a new interdisciplinary field of
+scientific diagnostics, uniting microscopy, mineralogy, and geochemistry
+within a single approach to the expert examination of ancient Chinese
+artefacts.
+</p>
+</section>
+
+<section class="section" id="applications">
+<p class="section__eyebrow">Section 4</p>
+<h2 class="section__title">Fields of Application</h2>
+<p>
+STA and TETA together form the basis of a structured, interdisciplinary
+knowledge base applicable both to museum practice and expert authentication,
+and to fundamental research on diagnostic features by means of
+non-destructive analysis.
+</p>
+<div class="application-grid" role="list">
+<div class="application-cell" role="listitem">
+<p class="application-cell__label">Museum practice</p>
+<p class="application-cell__text">Scientific documentation of collection objects; non-destructive examination of museum-grade jade and bronze specimens.</p>
+</div>
+<div class="application-cell" role="listitem">
+<p class="application-cell__label">Expert authentication</p>
+<p class="application-cell__text">Objective structural and geochemical verification of objects presented for attribution; detection of later imitations.</p>
+</div>
+<div class="application-cell" role="listitem">
+<p class="application-cell__label">Scientific research</p>
+<p class="application-cell__text">Study of the burial-environment evolution of jade and bronze; comparative analysis across cultures and periods.</p>
+</div>
+<div class="application-cell" role="listitem">
+<p class="application-cell__label">Digital archives</p>
+<p class="application-cell__text">Formation of structured scientific knowledge bases for digital atlases of cultural heritage, building on this methodological foundation.</p>
+</div>
+</div>
+</section>
+
+<section class="section" id="significance">
+<p class="section__eyebrow">Section 5</p>
+<h2 class="section__title">Scientific Significance</h2>
+<p>
+As with the companion Atlas of Chinese Porcelain Diagnostics, findings under
+this methodology are expressed using a standard four-level certainty
+classification:
+</p>
+<div class="certainty-grid" role="list">
+<div class="certainty-cell" role="listitem" style="background:#eaf4ea;">
+<p class="certainty-badge" style="color:#3a6b3a; border:1px solid #3a6b3a;">Confirmed</p>
+<p class="certainty-desc">Full concordance with the reference diagnostic model</p>
+</div>
+<div class="certainty-cell" role="listitem" style="background:#eef5fb;">
+<p class="certainty-badge" style="color:#2d5a8e; border:1px solid #2d5a8e;">Probable</p>
+<p class="certainty-desc">Strong structural and geochemical evidence</p>
+</div>
+<div class="certainty-cell" role="listitem" style="background:#fdfaed;">
+<p class="certainty-badge" style="color:#a67c00; border:1px solid #a67c00;">Proposed</p>
+<p class="certainty-desc">Partial concordance; further analysis indicated</p>
+</div>
+<div class="certainty-cell" role="listitem" style="background:#fdf0ee;">
+<p class="certainty-badge" style="color:#8b3a2a; border:1px solid #8b3a2a;">Disputed</p>
+<p class="certainty-desc">Conflicting evidence; competing attributions</p>
+</div>
+</div>
+</section>
+
+<a href="index.html" class="back-link">← Back to Atlas</a>
+
+</div>
+</main>
+
+<footer class="footer" role="contentinfo">
+<div class="container">
+<div class="footer__grid">
+<div>
+<p class="footer__brand-name">Global Diagnostic Atlas<br><span style="font-weight:300; color:var(--muted2);">of Ancient Chinese Jade and Bronze</span></p>
+<p class="footer__brand-desc">An independent scientific platform dedicated to the authentication and technological investigation of ancient Chinese jade and bronze artefacts.</p>
+<p style="font-size:var(--text-xs); color:var(--muted2); margin-top:var(--space-2); line-height:1.6;">
+Scientific Director and Founder:<br><strong>Professor Nona Dronova</strong><br>
+Doctor of Technical Sciences · Ph.D. in Geology and Mineralogy
+</p>
+</div>
+<div></div>
+<div>
+<p class="footer__col-title">Organisation</p>
+<p style="font-size:var(--text-sm); color:var(--muted2); line-height:1.7; margin:0;">
+International Foundation<br>
+Global Archive for Authentication of Antique Jade and Bronze<br>
+College of Experts and Appraisers of Antique Arts
+</p>
+</div>
+</div>
+<div class="footer__bottom">
+<p>© 2026 International Foundation — Global Archive for Authentication of Antique Jade and Bronze. Scientific Director: Professor Nona Dronova.</p>
+<p>Terms of Use · Editorial Policy</p>
+</div>
+</div>
+</footer>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

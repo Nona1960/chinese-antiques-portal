@@ -14,7 +14,8 @@ TAGLINE = "Scientific Library & Expert Reference"
 TODAY = datetime.date.today().isoformat()
 ORCID = "https://orcid.org/0009-0007-4867-9074"
 ATLAS = "https://nona1960.github.io/atlas-of-chinese-porcelain-diagnostics/"
-ATLAS_JB = "https://nona1960.github.io/Atlas-of-Ancient-Jade-and-Bronze-Diagnostics/"
+ATLAS_JB = "/jade-bronze-atlas/"  # full atlas hosted on this site (tools/sync_jade_atlas.py)
+ATLAS_JB_GH = "https://nona1960.github.io/Atlas-of-Ancient-Jade-and-Bronze-Diagnostics/"
 STUDIO = "https://nona-dronova-art-studio.vercel.app/"
 
 PERSON_ID = BASE + "/author.html#person"
@@ -25,7 +26,7 @@ PERSON = {
     "description": "Gemmologist and researcher; author of non-destructive methods for the authentication of Chinese porcelain (BEINOS, DEE, LIE, PLIC), jade (STA) and bronze (TETA).",
     "alumniOf": ["Moscow School of Art Crafts", "Moscow State Geological Prospecting Institute"],
     "url": BASE + "/author.html", "image": BASE + "/images/nona-dronova.jpg",
-    "sameAs": [ORCID, STUDIO, ATLAS, ATLAS_JB],
+    "sameAs": [ORCID, STUDIO, ATLAS, ATLAS_JB_GH],
     "knowsAbout": ["Chinese porcelain", "Chinese jade", "Chinese bronze", "Gemmology",
                    "Gemmological optical microscopy", "Authentication of antiques", "Attribution"],
 }
@@ -477,7 +478,7 @@ def build_jade_bronze():
    <span class="eyebrow">Bronze</span><h2 style="margin-top:0">Ancient Chinese bronze</h2>
    <p>Ritual bronze vessels and archaistic objects are studied through their form and decoration, casting technology, corrosion layers and patina. Microstructural and chemical evidence — including the trace elements of the alloy and of the corrosion products — makes it possible to distinguish natural long-term change from artificial patination.</p>
    <p>Documented reference objects in jade and bronze are published in the companion Atlas.</p>
-   <p><a class="btn" href="{ATLAS_JB}" target="_blank" rel="noopener">Atlas of Ancient Jade and Bronze ↗</a></p>
+   <p><a class="btn btn-gold" href="{ATLAS_JB}">Open the Atlas of Ancient Jade and Bronze</a> <a class="btn" href="{ATLAS_JB}reference-collection.html">Reference objects</a></p>
   </div>
   <img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, Atlas reference object RO-BRONZE-036" loading="lazy">
  </div>
@@ -550,6 +551,14 @@ def build_atlas():
   <p>The full reference collection — objects from the Tang through the Qing dynasties, each documented by the Dronova method of non-destructive gemmological optical microscopy (BEINOS) — together with the methodology and an index of more than 240 open-access publications.</p>
   <p><a class="btn btn-gold" href="{ATLAS}" target="_blank" rel="noopener">Open the Atlas ↗</a> <a class="btn" href="{ATLAS}methodology.html" target="_blank" rel="noopener">Methodology ↗</a></p>
   <p style="font-size:.85rem;color:var(--muted)">Attribution of reference objects follows their accompanying documentation; no independent authentication is claimed.</p></div>
+ </div>
+</section>
+<section class="section alt" id="jade-bronze">
+ <div class="wrap split rev">
+  <div class="prose"><span class="eyebrow">Companion atlas</span><h2 style="margin-top:0">Atlas of Ancient Jade and Bronze</h2>
+  <p>The companion reference system for ancient Chinese nephrite and ritual bronze: documented reference objects in jade (RO-JADE) and bronze (RO-BRONZE), studied by gemmological optical microscopy and SEM-EDX — surface alteration, burial patina, tool marks, corrosion layers and alloy chemistry.</p>
+  <p><a class="btn btn-gold" href="{ATLAS_JB}">Open the Atlas of Jade and Bronze</a> <a class="btn" href="{ATLAS_JB}methodology.html">Methodology</a></p></div>
+  <img src="/images/bronze-ding-036.jpg" alt="Bronze ritual tripod vessel of ding type, reference object RO-BRONZE-036" loading="lazy">
  </div>
 </section>'''
     page("atlas.html", "Diagnostic Atlas of Chinese Porcelain",
@@ -701,7 +710,7 @@ def build_author():
  <h2>Other projects</h2>
  <ul>
   <li><a href="{ATLAS}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Ceramics</a></li>
-  <li><a href="{ATLAS_JB}" target="_blank" rel="noopener">Global Diagnostic Atlas of Ancient Chinese Jade and Bronze</a></li>
+  <li><a href="{ATLAS_JB}">Global Diagnostic Atlas of Ancient Chinese Jade and Bronze</a></li>
   <li><a href="{STUDIO}" target="_blank" rel="noopener">Nona Dronova Art Studio</a> — painting, textile art and jewellery</li>
  </ul>
 </div></section>'''
@@ -760,7 +769,7 @@ def build_literature():
     body = head_band("Scientific Literature", f"The scientific articles of Professor Nona Dmitrievna Dronova: {total} open-access publications with DOI on the authentication of ancient Chinese porcelain, jade and bronze.",
                      crumbs=[("Scientific Literature", "literature.html")], eyebrow="Author’s scientific articles") + f'''
 <section class="section"><div class="wrap prose" style="max-width:900px">
- <p>All articles are published in open access (CC BY 4.0), most of them in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em>, each with a permanent DOI. The lists follow the publication indexes of the <a href="{ATLAS}publications.html" target="_blank" rel="noopener">Diagnostic Atlas of Chinese Porcelain</a> and the <a href="{ATLAS_JB}publications.html" target="_blank" rel="noopener">Atlas of Ancient Jade and Bronze</a>.</p>
+ <p>All articles are published in open access (CC BY 4.0), most of them in the Zenodo community <em>Global Archive for Authentication of Antique Porcelain</em>, each with a permanent DOI. The lists follow the publication indexes of the <a href="{ATLAS}publications.html" target="_blank" rel="noopener">Diagnostic Atlas of Chinese Porcelain</a> and the <a href="{ATLAS_JB}publications.html">Atlas of Ancient Jade and Bronze</a>.</p>
  <p style="display:flex;flex-wrap:wrap;gap:6px"><a class="tag" href="#porcelain">Porcelain · {np_}</a> <a class="tag" href="#jade">Jade &amp; bronze · {nj}</a></p>
  <h2 id="porcelain">Porcelain</h2>
  <p style="display:flex;flex-wrap:wrap;gap:6px">{jump(por)}</p>
@@ -878,6 +887,10 @@ def build_seo():
     for p in PAGES:
         loc = BASE + "/" + ("" if p == "index.html" else p.replace("index.html", ""))
         urls.append(f"  <url><loc>{loc}</loc><lastmod>{TODAY}</lastmod><priority>{prio.get(p, '0.7')}</priority></url>")
+    for f in sorted(os.listdir(os.path.join(ROOT, "jade-bronze-atlas"))):
+        if f.endswith(".html"):
+            loc = BASE + "/jade-bronze-atlas/" + ("" if f == "index.html" else f)
+            urls.append(f"  <url><loc>{loc}</loc><lastmod>{TODAY}</lastmod><priority>{'0.8' if f == 'index.html' else '0.6'}</priority></url>")
     open(os.path.join(ROOT, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tools/\n\nSitemap: {BASE}/sitemap.xml\n")
 
